@@ -4,7 +4,7 @@ collection: teaching
 type: "Computational Methods for Materials"
 permalink: /teaching/2014-spring-teaching-1
 venue: "University of Lincoln, UK (Virtual)"
-date: Since 2022
+date: May, 2022
 location: "City, Country"
 ---
 
