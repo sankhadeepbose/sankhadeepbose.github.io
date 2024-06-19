@@ -9,7 +9,7 @@ redirect_from:
 
 I am Sankhadeep Bose, a PhD student specializing in *[Thermodynamics](https://en.wikipedia.org/wiki/Thermodynamics)*, *[Statistical Mechanics](https://en.wikipedia.org/wiki/Statistical_mechanics)*, and *[Atomistic Simulation](http://www.sklogwiki.org/SklogWiki/index.php/Computer_simulation_techniques)*. I work in a vibrant research group, collaborating with esteemed researchers such as [Dr. Bruno D'Aguanno](https://sites.google.com/view/brunodaguanno) (*University of Lincoln, UK*), [Dr. Andrea Floris](https://staff.lincoln.ac.uk/afloris) (*University of Lincoln, UK*), and [Dr. Erminia Leonardi](https://www.crs4.it/peopledetails/ermy/leonardi-erminia/) (*CRS4, Italy*). 
 
-Feel free to explore this website to learn more about my [publications](-/_pages/publications.md), teaching activities, and ongoing research projects. You can also view my CV for a detailed overview of my academic and professional journey. If you are interested in any aspect of my work or would like to collaborate, please email me at [bose.sankhadeep@protonmail.ch](mailto:bose.sankhadeep@protonmail.ch).
+Feel free to explore this website to learn more about my [publications](/publications/), teaching activities, and ongoing research projects. You can also view my CV for a detailed overview of my academic and professional journey. If you are interested in any aspect of my work or would like to collaborate, please email me at [bose.sankhadeep@protonmail.ch](mailto:bose.sankhadeep@protonmail.ch).
 
 Research Interests
 ======
