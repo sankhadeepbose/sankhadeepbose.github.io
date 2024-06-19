@@ -5,7 +5,7 @@ permalink: /publication/2024-02-17-paper-title-number-4
 excerpt: 'This paper presents a theoretical model to describe specific heat variations in ionic nanomaterials with nanoparticles, helping to interpret past controversial results and aiding in the design of materials with improved thermal properties.'
 date: December 21, 2020
 venue: 'ACS Nano'
-paperurl: '[https://repository.lincoln.ac.uk/ndownloader/files/42850540](https://repository.lincoln.ac.uk/ndownloader/files/42850540)'
+paperurl: 'https://repository.lincoln.ac.uk/ndownloader/files/42850540'
 
 ---
 
