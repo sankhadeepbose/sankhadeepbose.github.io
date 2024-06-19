@@ -6,7 +6,7 @@ excerpt: 'This paper presents a theoretical model to describe specific heat vari
 date: December 21, 2020
 venue: 'ACS Nano'
 paperurl: '[https://repository.lincoln.ac.uk/ndownloader/files/42850540](https://repository.lincoln.ac.uk/ndownloader/files/42850540)'
-citation: 'Leonardi E, Floris A, Bose S, D’Aguanno B. Unified Description of the Specific Heat of Ionic Bulk Materials Containing Nanoparticles. ACS Nano. 2021;15(1):563-574. DOI: 10.1021/acsnano.0c05892.'
+
 ---
 
 The contents above will be part of a list of publications, if the user clicks the link for the publication than the contents of section will be rendered as a full page, allowing you to provide more information about the paper for the reader. When publications are displayed as a single page, the contents of the above "citation" field will automatically be included below this section in a smaller font.
