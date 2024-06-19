@@ -27,7 +27,7 @@ author:
   bio              : "PhD student specializing in Thermodynamics, Statistical Mechanics, and Atomistic Simulations."
   location         : "Kolkata, India"
   employer         : "Vellore Institute of Technology"
-  uri              : "https://sankhadeepbose.github.io"
+#  uri              : "https://sankhadeepbose.github.io"
   email            : "bose.sankhadeep@protonmail.ch" 
 
   # Academic websites
