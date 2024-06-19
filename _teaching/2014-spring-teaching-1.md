@@ -1,20 +1,11 @@
 ---
-title: "Teaching experience 1"
+title: "External Lecturer & Lab Instructor"
 collection: teaching
-type: "Undergraduate course"
+type: "Computational Methods for Materials"
 permalink: /teaching/2014-spring-teaching-1
-venue: "University 1, Department"
-date: 2014-01-01
+venue: "University of Lincoln, UK (Virtual)"
+date: Since 2022
 location: "City, Country"
 ---
 
-This is a description of a teaching experience. You can use markdown like any other post.
-
-Heading 1
-======
-
-Heading 2
-======
-
-Heading 3
-======
+Delivered lectures on the fundamentals and techniques of molecular dynamics simulations. Conducted hands-on practical sessions using VMD and LAMMPS software, enabling students to apply theoretical concepts to real-world simulations effectively.
