@@ -7,10 +7,12 @@ redirect_from:
   - /about.html
 ---
 
-I am Sankhadeep Bose (শঙ্খদীপ বোস, pronounced /ʃɔŋ.kʰoː.d̪ip/
+I am Sankhadeep Bose (শঙ্খদীপ বোস, pronounced /ʃɔŋ.kʰoː.d̪iːp/ 
 <audio id="pronunciation" src="{{ site.baseurl }}/assets/audio/pronunciation.mp3"></audio>
-<button onclick="document.getElementById('pronunciation').play()"> <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Play Pronunciation" style="width:15px;height:15px;border:0;">
-</button>), a PhD student at the [Vellore Institute of Technology](https://vit.ac.in/), India; specializing in *[Thermodynamics](https://en.wikipedia.org/wiki/Thermodynamics)*, *[Statistical Mechanics](https://en.wikipedia.org/wiki/Statistical_mechanics)*, and *[Atomistic Simulation](http://www.sklogwiki.org/SklogWiki/index.php/Computer_simulation_techniques)*. I hold a Master's degree in Nanotechnology and a Bachelor's degree in Mechanical Engineering. With renowned researchers like [Dr. Bruno D'Aguanno](https://sites.google.com/view/brunodaguanno) (*University of Lincoln, UK*), [Dr. Andrea Floris](https://staff.lincoln.ac.uk/afloris) (*University of Lincoln, UK*), and [Dr. Erminia Leonardi](https://www.crs4.it/peopledetails/ermy/leonardi-erminia/) (*CRS4, Italy*), I work in a dynamic and stimulating research environment, where we delve into the thermodynamics of real materials, trying to figure out what makes them tick (and sometimes why they refuse to). These collaborations have significantly shaped my research approach, providing diverse perspectives and the continuous pursuit of knowledge.
+<button onclick="document.getElementById('pronunciation').play()" style="background:none;border:none;padding:0;margin-left:5px;vertical-align:middle;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Audio-play-icon.png" alt="Play Pronunciation" style="width:20px;height:20px;border:0;">
+</button>
+), a PhD student at the [Vellore Institute of Technology](https://vit.ac.in/), India; specializing in *[Thermodynamics](https://en.wikipedia.org/wiki/Thermodynamics)*, *[Statistical Mechanics](https://en.wikipedia.org/wiki/Statistical_mechanics)*, and *[Atomistic Simulation](http://www.sklogwiki.org/SklogWiki/index.php/Computer_simulation_techniques)*. I hold a Master's degree in Nanotechnology and a Bachelor's degree in Mechanical Engineering. With renowned researchers like [Dr. Bruno D'Aguanno](https://sites.google.com/view/brunodaguanno) (*University of Lincoln, UK*), [Dr. Andrea Floris](https://staff.lincoln.ac.uk/afloris) (*University of Lincoln, UK*), and [Dr. Erminia Leonardi](https://www.crs4.it/peopledetails/ermy/leonardi-erminia/) (*CRS4, Italy*), I work in a dynamic and stimulating research environment, where we delve into the thermodynamics of real materials, trying to figure out what makes them tick (and sometimes why they refuse to). These collaborations have significantly shaped my research approach, providing diverse perspectives and the continuous pursuit of knowledge.
 
 Research Interests
 ======
