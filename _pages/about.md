@@ -1,13 +1,15 @@
-> *"Thermodynamics is a funny subject.The first time you go through it,you don't understand it at all.The second time you go through it,you think you understand it,except for one or two points.The third time you go through it,you know you don't understand it,but by that time you are so used to the subject,it doesn't bother you anymore."* -- Arnold Sommerfield
 ---
 permalink: /
-title: "About Me"
+title: ""
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
+> *"Thermodynamics is a funny subject.The first time you go through it,you don't understand it at all.The second time you go through it,you think you understand it,except for one or two points.The third time you go through it,you know you don't understand it,but by that time you are so used to the subject,it doesn't bother you anymore."* -- Arnold Sommerfield
 
+About Me
+======
 Hello, I am Sankhadeep Bose (শঙ্খদীপ বোস, pronounced /ʃɔŋ.kʰoː.d̪iːp/<audio id="pronunciation" src="{{ site.baseurl }}/assets/audio/pronunciation.mp3"></audio>
 <button onclick="document.getElementById('pronunciation').play()" style="background:none;border:none;padding:0;margin-left:1px;vertical-align:middle;display:inline;">
   <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Play Pronunciation" style="width:20px;height:20px;border:0;vertical-align:middle;">
