@@ -5,7 +5,7 @@ redirect_from:
   - /about/
   - /about.html
 ---
-> *"Thermodynamics is a funny subject.The first time you go through it,you don't understand it at all.The second time you go through it,you think you understand it,except for one or two points.The third time you go through it,you know you don't understand it,but by that time you are so used to the subject,it doesn't bother you anymore."* -- Arnold Sommerfield
+> *"Physics is simple, but subtle."* -- Paul Ehrenfest
 
 About Me
 ======
