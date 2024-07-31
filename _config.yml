@@ -283,6 +283,15 @@ permalink: /:categories/:title/
 # paginate_path: /page:num/
 timezone: Asia/Calcutta # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
+# Add this to _config.yml
+sass:
+  sass_dir: _sass
+  style: compressed # http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
+
+# Make sure the CSS file is included
+include:
+  - assets/css/custom.scss
+
 
 # Plugins
 plugins:
