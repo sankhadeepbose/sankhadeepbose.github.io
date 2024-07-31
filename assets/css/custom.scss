@@ -1,0 +1,28 @@
+// Custom colors
+$primary-color: #FEFBD8;
+$secondary-color: #987D9A;
+
+// Apply colors to elements
+body {
+  background-color: $secondary-color;
+  color: #333;
+}
+
+header {
+  background-color: $primary-color;
+  color: white;
+}
+
+a {
+  color: $primary-color;
+}
+
+// Additional custom styles
+.navbar {
+  background-color: $primary-color;
+}
+
+.footer {
+  background-color: $primary-color;
+  color: white;
+}
