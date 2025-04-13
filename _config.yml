@@ -35,7 +35,7 @@ author:
   googlescholar    : "https://scholar.google.com/citations?user=vDWwsy8AAAAJ&hl=en"
 #  impactstory      : # URL
   orcid            : "https://orcid.org/0000-0002-5124-5134"
-#  semantic         : # URL
+  semantic         : "https://www.semanticscholar.org/author/123670848"
 #  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   researchgate     : "https://www.researchgate.net/profile/Sankhadeep-Bose-2"
 
@@ -43,12 +43,12 @@ author:
   bitbucket        : # Username - Update with your username on the site
   codepen          : # Username
   dribbble         : # Username
-  github           : "sankhadeepbose"
+  github           : "bose-s"
   kaggle           : # Username  
   stackoverflow    : # User number or user number and name (i.e., use "1" or "1/jeff-atwood")    
 
   # Social media
-#  bluesky          : "bsky.app" # Replace this with you Bluesky username
+  bluesky          : "theotherbose.bsky.social" # Replace this with you Bluesky username
   facebook         : # Username
   flickr           : # Username
   foursquare       : # Username
@@ -58,7 +58,7 @@ author:
   instagram        : # Username
   lastfm           : # Username
   linkedin         : "bosesankhadeep"
-  mastodon         : # URL
+  mastodon         : "https://mastodon.social/@theotherbose"
   medium           : # URL
   pinterest        : # Username
   soundcloud       : # Username
