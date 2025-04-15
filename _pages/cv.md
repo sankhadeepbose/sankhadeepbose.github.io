@@ -11,7 +11,7 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Mechanical Engineering (Research Area - Thermodynamics), Vellore Institute of Technology, Vellore, India, 2024 (expected)
+* Ph.D in Mechanical Engineering (Research Area - Thermodynamics), Vellore Institute of Technology, Vellore, India, 2025 (expected)
 * M.Tech. in Nanotechnology, Vellore Institute of Technology, Vellore, India, 2020
 * B.Tech. in Mechanical Engineering, Maulana Abul Kalam Azad University of Technology, Kolkata, India, 2017
 
@@ -58,10 +58,4 @@ Talks
 ======
   <ul>{% for post in site.talks reversed %}
     {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
   {% endfor %}</ul>
