@@ -10,7 +10,7 @@
   We start with simple, readable defaults and a light background.
 */
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: system-ui, -apple-system, 'BlinkMacSystemFont', Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
   margin: 0;
   padding: 0;
