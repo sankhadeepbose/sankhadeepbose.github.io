@@ -33,19 +33,20 @@
   --sidebar-width: 260px;
   --profile-image-size: 160px;
 
-  /* Colour scheme: cool blue/teal */
-  --color-background: #f4f7fb;    /* slightly cooler background */
+ :root {
+  --color-background: #f6f3ee;    /* warm paper */
   --color-sidebar-bg: #ffffff;
   --color-main-bg: #ffffff;
-  --color-text: #1f2933;          /* dark blue-grey */
-  --color-muted: #6b7280;         /* muted grey for tagline */
-  --color-border: #d5dde7;
-  --color-nav-border: #c3cfdd;
-  --color-primary: #006d77;       /* teal accent */
-  --color-hover-bg: #e0edf4;      /* soft blue hover */
-  --color-footer-bg: #f4f7fb;
-  --color-footer-text: #6b7280;
+  --color-text: #2d2a24;          /* dark warm grey/brown */
+  --color-muted: #756f63;         /* muted warm text */
+  --color-border: #e0d7c8;
+  --color-nav-border: #d6cbb9;
+  --color-primary: #b35c1e;       /* rust accent, can be toned down */
+  --color-hover-bg: #e9dfd1;
+  --color-footer-bg: #f6f3ee;
+  --color-footer-text: #756f63;
 }
+
 
 /*
   Base typography and colours
