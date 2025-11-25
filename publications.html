@@ -157,7 +157,7 @@
             const cslEntry = temp.querySelector('.csl-entry') || temp;
             const li = document.createElement('li');
             // Bold the surname "Bose" in the citation
-            let entryHtml = cslEntry.innerHTML.replace(/Bose/g, '<strong>Bose</strong>');
+            let entryHtml = cslEntry.innerHTML.replace(/Bose, S./g, '<strong>Bose, S.</strong>');
             li.innerHTML = entryHtml;
             // Add buttons for PDF, article page, and BibTeX
             const linksDiv = document.createElement('div');
