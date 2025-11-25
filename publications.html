@@ -1,60 +1,129 @@
-  <!-- Monolithic Citation.js (includes BibTeX + CSL plugins) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sankhadeep Bose – Publications</title>
+  <!--
+    Publications page: loads a BibTeX file and formats entries using Citation.js.
+    Uses ACS citation style by default; falls back to APS if ACS is unavailable.
+  -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Font Awesome (icons) -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Academicons (Google Scholar / ORCID icons) -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar with photo and contact links -->
+    <aside class="sidebar">
+      <img src="images/profile.jpg" alt="Profile photo">
+
+      <div class="contact-links">
+        <!-- Google Scholar icon -->
+        <a href="[https://scholar.google.com/citations?user=YOUR_ID]"
+           title="Google Scholar" target="_blank" rel="noopener">
+          <i class="ai ai-google-scholar-square"></i>
+        </a>
+        <!-- ResearchGate icon -->
+        <a href="[https://www.researchgate.net/profile/YOUR_PROFILE]"
+           title="ResearchGate" target="_blank" rel="noopener">
+          <i class="fab fa-researchgate"></i>
+        </a>
+        <!-- LinkedIn icon -->
+        <a href="[https://www.linkedin.com/in/yourprofile]"
+           title="LinkedIn" target="_blank" rel="noopener">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <!-- ORCID icon -->
+        <a href="[https://orcid.org/0000-0000-0000-0000]"
+           title="ORCID" target="_blank" rel="noopener">
+          <i class="ai ai-orcid"></i>
+        </a>
+        <!-- GitHub icon -->
+        <a href="[https://github.com/yourusername]"
+           title="GitHub" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+      <p class="contact-email">
+        <i class="fas fa-envelope"></i> bose.sankhadeep@pm.me
+      </p>
+    </aside>
+
+    <!-- Main content area -->
+    <div class="main-content">
+      <header>
+        <h1>Sankhadeep Bose</h1>
+        <p>PhD student specializing in Thermodynamics, Statistical Mechanics, and Atomistic Simulations.</p>
+        <p><strong>Current Affiliation</strong> – School of Mechanical Engineering, Vellore Institute Of Technology, Vellore, Tamil Nadu, India.</p>
+      </header>
+      <!-- Primary navigation -->
+      <nav>
+        <ul>
+          <li><a href="index.html">About</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html" class="active">Publications</a></li>
+        </ul>
+      </nav>
+
+      <main>
+        <section id="publications">
+          <h2>Publications</h2>
+          <div id="pub-list">Loading publications…</div>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Monolithic Citation.js -->
   <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
 
   <script>
     const Cite = window.Cite;
-    if (!Cite) {
-      console.error('Citation.js did not load correctly.');
-    }
 
-    // Load and register ACS CSL style; if that fails, fall back to APS (physics).
-    let acsTemplateLoaded = false;
-    async function ensureACSTemplate () {
-      if (acsTemplateLoaded) return;
-
+    // Load ACS CSL style; fall back to APS (Physics) if ACS fails
+    let templateLoaded = false;
+    async function ensureACSTemplate() {
+      if (templateLoaded) return;
       const config = Cite.plugins.config.get('csl');
-
-      // If already registered under 'acs', skip fetching
-      try {
-        if (config.templates.has && config.templates.has('acs')) {
-          acsTemplateLoaded = true;
-          return;
-        }
-      } catch (e) {
-        // older API: just proceed to load
-      }
 
       try {
         // Primary: ACS style
         const res = await fetch('https://www.zotero.org/styles/american-chemical-society');
-        if (!res.ok) {
-          throw new Error('Failed to fetch ACS CSL style: ' + res.status);
+        if (res.ok) {
+          const style = await res.text();
+          config.templates.add('acs', style);
+        } else {
+          throw new Error('ACS style not found, status ' + res.status);
         }
-        const style = await res.text();
-        config.templates.add('acs', style);
-        acsTemplateLoaded = true;
       } catch (e) {
-        console.warn('Failed to load ACS style, falling back to APS (physics):', e);
-        // Fallback: APS physics style
+        console.warn('Falling back to APS style:', e);
         const res2 = await fetch('https://www.zotero.org/styles/american-physical-society');
-        if (!res2.ok) {
-          throw new Error('Failed to fetch APS fallback style: ' + res2.status);
+        if (res2.ok) {
+          const style2 = await res2.text();
+          config.templates.add('acs', style2);  // register as "acs" for uniform calls
+        } else {
+          console.error('Failed to load APS fallback, status ' + res2.status);
         }
-        const style2 = await res2.text();
-        // Still register under 'acs' so the rest of the code can use template: "acs"
-        config.templates.add('acs', style2);
-        acsTemplateLoaded = true;
       }
+      templateLoaded = true;
     }
 
-    // Very simple BibTeX field parser (works for your clean entries)
-    function parseBibFields (entry) {
+    // Parse fields from a BibTeX entry
+    function parseBibFields(entry) {
       const fields = {};
       const bodyStart = entry.indexOf('{');
       if (bodyStart === -1) return fields;
       const body = entry.slice(bodyStart + 1);
       const lines = body.split(/\n/);
-
       for (let line of lines) {
         line = line.trim();
         if (line.startsWith('}')) break;
@@ -68,124 +137,91 @@
       return fields;
     }
 
-    // Map BibTeX month to numeric month
-    function parseMonth (monthRaw) {
-      if (!monthRaw) return 0;
-      const mNum = parseInt(monthRaw, 10);
-      if (!isNaN(mNum)) return mNum;
-
-      const short = monthRaw.toLowerCase().slice(0, 3);
-      const map = {
-        jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
-        jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
-      };
+    function parseMonth(raw) {
+      if (!raw) return 0;
+      const num = parseInt(raw, 10);
+      if (!isNaN(num)) return num;
+      const short = raw.toLowerCase().slice(0, 3);
+      const map = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
       return map[short] || 0;
     }
 
-    // Extract BibTeX key from entry
-    function extractBibKey (entry) {
+    function extractBibKey(entry) {
       const m = entry.match(/^@\w+\s*\{\s*([^,]+),/);
       return m ? m[1].trim() : 'entry';
     }
 
-    async function loadPublications () {
+    async function loadPublications() {
       const container = document.getElementById('pub-list');
-
       try {
         await ensureACSTemplate();
 
         const response = await fetch('publications.bib');
         if (!response.ok) {
-          throw new Error('Network response was not ok (status ' + response.status + ')');
+          throw new Error('Network error ' + response.status);
         }
 
         let bibText = await response.text();
-
-        // Remove comment lines starting with '%' and trim
         bibText = bibText.replace(/^\s*%.*$/gm, '').trim();
         if (!bibText) {
           throw new Error('BibTeX file is empty after removing comments.');
         }
 
-        // Split into entries on newline + '@'
         const rawEntries = bibText.split(/\n@/).filter(e => e.trim());
-        const entries = rawEntries.map(entry => {
-          const trimmed = entry.trim();
-          return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
-        });
-
+        const entries = rawEntries.map(e => e.trim().startsWith('@') ? e.trim() : '@' + e.trim());
         const categories = { peer: [], thesis: [] };
 
         entries.forEach(entry => {
-          const typeMatch = entry.match(/^@(\w+)/i);
-          const type = typeMatch ? typeMatch[1].toLowerCase() : '';
+          const m = entry.match(/^@(\w+)/i);
+          const type = m ? m[1].toLowerCase() : '';
           const fields = parseBibFields(entry);
-          const year = fields.year ? parseInt(fields.year, 10) : 0;
+          const year  = fields.year ? parseInt(fields.year, 10) : 0;
           const month = parseMonth(fields.month);
-
-          const item = { entry, fields, year, month };
-
-          if (type === 'article') {
-            categories.peer.push(item);
-          } else if (type.includes('thesis')) {
-            categories.thesis.push(item);
-          } else {
-            categories.peer.push(item); // fallback
-          }
+          const item  = { entry, fields, year, month };
+          if (type === 'article') categories.peer.push(item);
+          else if (type.includes('thesis')) categories.thesis.push(item);
+          else categories.peer.push(item);
         });
 
-        // Sort by year desc, then month desc
-        const sortDesc = (a, b) => {
+        const sortDesc = (a,b) => {
           if (b.year !== a.year) return b.year - a.year;
           return b.month - a.month;
         };
         categories.peer.sort(sortDesc);
         categories.thesis.sort(sortDesc);
 
-        // Clear existing content
         container.innerHTML = '';
 
-        // Helper to render a category list
-        const renderList = (items, headingText) => {
+        const renderList = (items, heading) => {
           if (!items.length) return;
-
           const h3 = document.createElement('h3');
-          h3.textContent = headingText;
+          h3.textContent = heading;
           container.appendChild(h3);
-
           const ol = document.createElement('ol');
           ol.setAttribute('reversed', '');
           ol.start = items.length;
 
-          items.forEach(item => {
-            const { entry, fields } = item;
-
-            // Format citation using ACS (or APS fallback) style
+          items.forEach(({ entry, fields }) => {
             const cite = new Cite(entry);
             const html = cite.format('bibliography', {
               format: 'html',
               template: 'acs',
               lang: 'en-US'
             });
-
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const cslEntry = temp.querySelector('.csl-entry') || temp;
-
             const li = document.createElement('li');
-            li.innerHTML = cslEntry.innerHTML;
 
-            // --- Buttons under each entry: PDF, Article page, BibTeX ---
+            // Bold-face your surname in the citation text
+            let entryHtml = cslEntry.innerHTML.replace(/Bose/g, '<strong>Bose</strong>');
+            li.innerHTML = entryHtml;
+
             const linksDiv = document.createElement('div');
             linksDiv.className = 'pub-links';
 
-            // PDF: prefer eprint, then URL/doi
-            const pdfUrl =
-              fields.eprint ||
-              fields.url ||
-              fields.URL ||
-              (fields.doi ? ('https://doi.org/' + fields.doi) : '');
-
+            // Buttons: PDF (eprint/URL/DOI), Article page (URL/DOI), BibTeX
+            const pdfUrl  = fields.eprint || fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (pdfUrl) {
               const aPdf = document.createElement('a');
               aPdf.textContent = 'PDF';
@@ -195,13 +231,7 @@
               aPdf.className = 'pub-btn';
               linksDiv.appendChild(aPdf);
             }
-
-            // Article page: main URL or DOI
-            const webUrl =
-              fields.url ||
-              fields.URL ||
-              (fields.doi ? ('https://doi.org/' + fields.doi) : '');
-
+            const webUrl = fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (webUrl) {
               const aWeb = document.createElement('a');
               aWeb.textContent = 'Article page';
@@ -211,15 +241,12 @@
               aWeb.className = 'pub-btn';
               linksDiv.appendChild(aWeb);
             }
-
-            // BibTeX download for this entry
             const key = extractBibKey(entry);
             const aBib = document.createElement('a');
             aBib.textContent = 'BibTeX';
             aBib.className = 'pub-btn';
             const bibContent = entry.trim() + '\n';
-            aBib.href = 'data:text/plain;charset=utf-8,' +
-                        encodeURIComponent(bibContent);
+            aBib.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(bibContent);
             aBib.download = key + '.bib';
             linksDiv.appendChild(aBib);
 
@@ -230,10 +257,10 @@
           container.appendChild(ol);
         };
 
-        renderList(categories.peer, 'In Peer-Reviewed Journals');
+        renderList(categories.peer, 'In Peer‑Reviewed Journals');
         renderList(categories.thesis, 'Theses');
       } catch (err) {
-        console.error('Failed to load publications:', err);
+        console.error(err);
         container.textContent = 'Unable to load publications. Please check your .bib file.';
       }
     }
