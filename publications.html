@@ -1,92 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sankhadeep Bose – Publications</title>
-  <!--
-    Minimal academic website: publications page.
-    Publications are loaded from a BibTeX file and formatted using Citation.js
-    with the AIP CSL style from Zotero.
-  -->
-  <link rel="stylesheet" href="styles.css">
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Academicons for Google Scholar / ORCID icons -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
-</head>
-<body>
-  <div class="container">
-    <!-- Sidebar with photo and contact links -->
-    <aside class="sidebar">
-      <img src="images/profile.jpg" alt="Profile photo">
-
-      <div class="contact-links">
-        <!-- Google Scholar icon -->
-        <a href="[https://scholar.google.com/citations?user=YOUR_ID]"
-           title="Google Scholar" target="_blank" rel="noopener">
-          <i class="ai ai-google-scholar-square"></i>
-        </a>
-        <!-- ResearchGate icon -->
-        <a href="[https://www.researchgate.net/profile/YOUR_PROFILE]"
-           title="ResearchGate" target="_blank" rel="noopener">
-          <i class="fab fa-researchgate"></i>
-        </a>
-        <!-- LinkedIn icon -->
-        <a href="[https://www.linkedin.com/in/yourprofile]"
-           title="LinkedIn" target="_blank" rel="noopener">
-          <i class="fab fa-linkedin"></i>
-        </a>
-        <!-- ORCID icon -->
-        <a href="[https://orcid.org/0000-0000-0000-0000]"
-           title="ORCID" target="_blank" rel="noopener">
-          <i class="ai ai-orcid"></i>
-        </a>
-        <!-- GitHub icon -->
-        <a href="[https://github.com/yourusername]"
-           title="GitHub" target="_blank" rel="noopener">
-          <i class="fab fa-github"></i>
-        </a>
-      </div>
-
-      <!-- Explicit email address below the icons -->
-      <p class="contact-email">
-        <i class="fas fa-envelope"></i> bose.sankhadeep@pm.me
-      </p>
-    </aside>
-
-    <!-- Main content area -->
-    <div class="main-content">
-      <header>
-        <h1>Sankhadeep Bose</h1>
-        <p>PhD student specializing in Thermodynamics, Statistical Mechanics, and Atomistic Simulations.</p>
-        <p><strong>Current Affiliation</strong> – School of Mechanical Engineering, Vellore Institute Of Technology, Vellore, Tamil Nadu, India.</p>
-      </header>
-
-      <!-- Primary navigation -->
-      <nav>
-        <ul>
-          <li><a href="index.html">About</a></li>
-          <li><a href="research.html">Research</a></li>
-          <li><a href="publications.html" class="active">Publications</a></li>
-        </ul>
-      </nav>
-
-      <main>
-        <section id="publications">
-          <h2>Publications</h2>
-          <div id="pub-list">Loading publications…</div>
-        </section>
-      </main>
-
-      <footer>
-        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
-      </footer>
-    </div>
-  </div>
-
   <!-- Monolithic Citation.js (includes BibTeX + CSL plugins) -->
   <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
 
@@ -96,43 +7,56 @@
       console.error('Citation.js did not load correctly.');
     }
 
-    // Load and register the AIP CSL style from Zotero
-    let aipTemplateLoaded = false;
-    async function ensureAIPTemplate () {
-      if (aipTemplateLoaded) return;
+    // Load and register ACS CSL style; if that fails, fall back to APS (physics).
+    let acsTemplateLoaded = false;
+    async function ensureACSTemplate () {
+      if (acsTemplateLoaded) return;
 
       const config = Cite.plugins.config.get('csl');
+
+      // If already registered under 'acs', skip fetching
       try {
-        if (config.templates.has && config.templates.has('aip')) {
-          aipTemplateLoaded = true;
+        if (config.templates.has && config.templates.has('acs')) {
+          acsTemplateLoaded = true;
           return;
         }
       } catch (e) {
-        // if .has is not available, we just proceed to load
+        // older API: just proceed to load
       }
 
-      const res = await fetch('https://www.zotero.org/styles/american-institute-of-physics');
-      if (!res.ok) {
-        throw new Error('Failed to fetch AIP CSL style: ' + res.status);
+      try {
+        // Primary: ACS style
+        const res = await fetch('https://www.zotero.org/styles/american-chemical-society');
+        if (!res.ok) {
+          throw new Error('Failed to fetch ACS CSL style: ' + res.status);
+        }
+        const style = await res.text();
+        config.templates.add('acs', style);
+        acsTemplateLoaded = true;
+      } catch (e) {
+        console.warn('Failed to load ACS style, falling back to APS (physics):', e);
+        // Fallback: APS physics style
+        const res2 = await fetch('https://www.zotero.org/styles/american-physical-society');
+        if (!res2.ok) {
+          throw new Error('Failed to fetch APS fallback style: ' + res2.status);
+        }
+        const style2 = await res2.text();
+        // Still register under 'acs' so the rest of the code can use template: "acs"
+        config.templates.add('acs', style2);
+        acsTemplateLoaded = true;
       }
-      const style = await res.text();
-      config.templates.add('aip', style);
-      aipTemplateLoaded = true;
     }
 
-    // Very simple BibTeX field parser (enough for our limited, clean entries)
+    // Very simple BibTeX field parser (works for your clean entries)
     function parseBibFields (entry) {
       const fields = {};
-      // Strip leading '@type{key,' part
       const bodyStart = entry.indexOf('{');
       if (bodyStart === -1) return fields;
       const body = entry.slice(bodyStart + 1);
-
-      // Split on newlines; parse lines of the form: key = {value},
       const lines = body.split(/\n/);
+
       for (let line of lines) {
         line = line.trim();
-        // stop at closing brace
         if (line.startsWith('}')) break;
         const m = line.match(/^([A-Za-z]+)\s*=\s*[{"](.+?)[}"],?\s*$/);
         if (m) {
@@ -144,7 +68,7 @@
       return fields;
     }
 
-    // Convert month field (string or number) to numeric month
+    // Map BibTeX month to numeric month
     function parseMonth (monthRaw) {
       if (!monthRaw) return 0;
       const mNum = parseInt(monthRaw, 10);
@@ -168,7 +92,7 @@
       const container = document.getElementById('pub-list');
 
       try {
-        await ensureAIPTemplate();
+        await ensureACSTemplate();
 
         const response = await fetch('publications.bib');
         if (!response.ok) {
@@ -210,7 +134,7 @@
           }
         });
 
-        // Sort by (year desc, month desc)
+        // Sort by year desc, then month desc
         const sortDesc = (a, b) => {
           if (b.year !== a.year) return b.year - a.year;
           return b.month - a.month;
@@ -218,10 +142,10 @@
         categories.peer.sort(sortDesc);
         categories.thesis.sort(sortDesc);
 
-        // Clear container
+        // Clear existing content
         container.innerHTML = '';
 
-        // Helper to render one category
+        // Helper to render a category list
         const renderList = (items, headingText) => {
           if (!items.length) return;
 
@@ -236,11 +160,11 @@
           items.forEach(item => {
             const { entry, fields } = item;
 
-            // ---- Format citation in AIP style via CSL template 'aip' ----
+            // Format citation using ACS (or APS fallback) style
             const cite = new Cite(entry);
             const html = cite.format('bibliography', {
               format: 'html',
-              template: 'aip',
+              template: 'acs',
               lang: 'en-US'
             });
 
@@ -251,15 +175,16 @@
             const li = document.createElement('li');
             li.innerHTML = cslEntry.innerHTML;
 
-            // ---- Buttons: PDF, Article page, BibTeX ----
+            // --- Buttons under each entry: PDF, Article page, BibTeX ---
             const linksDiv = document.createElement('div');
             linksDiv.className = 'pub-links';
 
-            // 1) PDF: prefer 'eprint' (often a PDF or DOI), fall back to URL/doi if missing
-            const pdfUrl = fields.eprint ||
-                           fields.url ||
-                           fields.url?.toLowerCase?.() ||
-                           fields.doi && ('https://doi.org/' + fields.doi);
+            // PDF: prefer eprint, then URL/doi
+            const pdfUrl =
+              fields.eprint ||
+              fields.url ||
+              fields.URL ||
+              (fields.doi ? ('https://doi.org/' + fields.doi) : '');
 
             if (pdfUrl) {
               const aPdf = document.createElement('a');
@@ -271,10 +196,12 @@
               linksDiv.appendChild(aPdf);
             }
 
-            // 2) Article page: use URL or DOI
-            const webUrl = fields.url ||
-                           fields.URL ||
-                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            // Article page: main URL or DOI
+            const webUrl =
+              fields.url ||
+              fields.URL ||
+              (fields.doi ? ('https://doi.org/' + fields.doi) : '');
+
             if (webUrl) {
               const aWeb = document.createElement('a');
               aWeb.textContent = 'Article page';
@@ -285,7 +212,7 @@
               linksDiv.appendChild(aWeb);
             }
 
-            // 3) BibTeX: construct a downloadable blob from this entry
+            // BibTeX download for this entry
             const key = extractBibKey(entry);
             const aBib = document.createElement('a');
             aBib.textContent = 'BibTeX';
