@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Your Name] – Publications</title>
+  <!--
+    Minimal academic website: publications page.
+    Publications are loaded from a BibTeX file and formatted using Citation.js.
+  -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Font Awesome for envelope and LinkedIn icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Academicons for Google Scholar icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar with photo and contact links -->
+    <aside class="sidebar">
+      <img src="images/profile.jpg" alt="Profile photo">
+      <div class="contact-links">
+        <!-- Google Scholar icon -->
+        <a href="[https://scholar.google.com/citations?user=YOUR_ID]" title="Google Scholar" target="_blank" rel="noopener"><i class="ai ai-google-scholar-square"></i></a>
+        <!-- ResearchGate icon -->
+        <a href="[https://www.researchgate.net/profile/YOUR_PROFILE]" title="ResearchGate" target="_blank" rel="noopener"><i class="fab fa-researchgate"></i></a>
+        <!-- LinkedIn icon -->
+        <a href="[https://www.linkedin.com/in/yourprofile]" title="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+        <!-- ORCID icon -->
+        <a href="[https://orcid.org/0000-0000-0000-0000]" title="ORCID" target="_blank" rel="noopener"><i class="fab fa-orcid"></i></a>
+        <!-- GitHub icon -->
+        <a href="[https://github.com/yourusername]" title="GitHub" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+      </div>
+      <!-- Explicit email address below the icons -->
+      <p class="contact-email"><i class="fas fa-envelope"></i> bose.sankhadeep@pm.me</p>
+    </aside>
+    <!-- Main content area -->
+    <div class="main-content">
+      <header>
+        <h1>[Your Name]</h1>
+        <p>Current Affiliation – School of Mechanical Engineering, Vellore Institute Of Technology, Vellore, Tamil Nadu, India.</p>
+      </header>
+      <!-- Primary navigation -->
+      <nav>
+        <ul>
+          <li><a href="index.html">About</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html" class="active">Publications</a></li>
+        </ul>
+      </nav>
+      <main>
+        <section id="publications">
+          <h2>Publications</h2>
+          <div id="pub-list">Loading publications…</div>
+        </section>
+      </main>
+      <footer>
+        <p>&copy; 2025 [Your Name]. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+  <!-- Load Citation.js core and the BibTeX plugin from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@citation-js/core@0.6.8/browser/citation.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@citation-js/plugin-bibtex@0.6.8/browser/plugin-bibtex.min.js"></script>
+  <script>
+    /*
+      Fetch the BibTeX file and render it as an HTML bibliography.
+      The Citation.js library converts BibTeX into formatted HTML.
+      See https://citation.js.org/ for more details.
+    */
+    async function loadPublications() {
+      const container = document.getElementById('pub-list');
+      try {
+        const response = await fetch('publications.bib');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const bibText = await response.text();
+        // Split the BibTeX text into individual entries. Use a newline and '@' as the delimiter.
+        const rawEntries = bibText.split(/\n@/).filter(e => e.trim());
+        // Ensure each entry starts with '@'
+        const entries = rawEntries.map((entry) => {
+          const trimmed = entry.trim();
+          return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
+        });
+        // Categorise entries into peer‑reviewed articles and theses, capturing the year for sorting.
+        const categories = { peer: [], thesis: [] };
+        entries.forEach((entry) => {
+          const typeMatch = entry.match(/^@(\w+)/i);
+          const type = typeMatch ? typeMatch[1].toLowerCase() : '';
+          const yearMatch = entry.match(/year\s*=\s*\{?(\d{4})/i);
+          const year = yearMatch ? parseInt(yearMatch[1], 10) : 0;
+          if (type === 'article') {
+            categories.peer.push({ entry, year });
+          } else if (type.includes('thesis')) {
+            categories.thesis.push({ entry, year });
+          } else {
+            categories.peer.push({ entry, year });
+          }
+        });
+        // Sort each category by descending year
+        const sortDesc = (a, b) => b.year - a.year;
+        categories.peer.sort(sortDesc);
+        categories.thesis.sort(sortDesc);
+        // Clear the container before rendering
+        container.innerHTML = '';
+        // Helper function to render a category of entries with a heading
+        const renderList = (items, headingText) => {
+          if (!items.length) return;
+          const h3 = document.createElement('h3');
+          h3.textContent = headingText;
+          container.appendChild(h3);
+          const ol = document.createElement('ol');
+          // Use reversed numbering so the highest number appears first
+          ol.setAttribute('reversed', '');
+          ol.start = items.length;
+          items.forEach(({ entry }) => {
+            // Create a Cite instance for the single entry
+            const cite = new Cite(entry);
+            const html = cite.format('bibliography', {
+              format: 'html',
+              template: 'apa',
+              lang: 'en-US'
+            });
+            // Extract the actual entry without the wrapper
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const cslEntry = temp.querySelector('.csl-entry') || temp;
+            const li = document.createElement('li');
+            li.innerHTML = cslEntry.innerHTML;
+            ol.appendChild(li);
+          });
+          container.appendChild(ol);
+        };
+        // Render the peer‑reviewed articles and theses
+        renderList(categories.peer, 'In Peer‑Reviewed Journals');
+        renderList(categories.thesis, 'Theses');
+      } catch (err) {
+        console.error('Failed to load publications:', err);
+        container.textContent = 'Unable to load publications. Please check your .bib file.';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadPublications);
+  </script>
+</body>
+</html>
