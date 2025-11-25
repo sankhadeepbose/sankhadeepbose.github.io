@@ -6,7 +6,7 @@
   <title>Sankhadeep Bose – Publications</title>
   <!--
     Publications page: loads a BibTeX file and formats entries using Citation.js.
-    Uses APA citation style and groups entries into peer‑reviewed journals and theses.
+    Uses APA citation style and groups entries into peer-reviewed journals and theses.
     Includes PDF, Article page and BibTeX buttons for each entry.
   -->
   <link rel="stylesheet" href="styles.css">
@@ -50,10 +50,7 @@
       Load the Citation.js library via CommonJS. The global bundle defines a
       `require` function that exposes Citation.js as a module. Using
       require('citation-js') returns the Cite constructor, whereas
-      `window.Cite` is undefined in browser releases. See the
-      Citation.js documentation for details【497923767640375†L208-L214】. By
-      importing with require(), we ensure the library is available and avoid
-      errors that prevent the bibliography from rendering.
+      `window.Cite` is undefined in browser releases.
     */
     const Cite = require('citation-js');
 
@@ -139,6 +136,7 @@
         categories.thesis.sort(sortDesc);
         // Clear container
         container.innerHTML = '';
+
         // Render lists for each category
         function renderList(items, heading) {
           if (!items.length) return;
@@ -148,22 +146,47 @@
           const ol = document.createElement('ol');
           ol.setAttribute('reversed', '');
           ol.start = items.length;
+
           items.forEach(({ entry, fields }) => {
             // Format using APA style (built into Citation.js)
             const cite = new Cite(entry);
-            const html = cite.format('bibliography', { format: 'html', template: 'apa', lang: 'en-US' });
+            const html = cite.format('bibliography', {
+              format: 'html',
+              template: 'apa',
+              lang: 'en-US'
+            });
+
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const cslEntry = temp.querySelector('.csl-entry') || temp;
+
+            // Remove DOI/URL part from the formatted reference:
+            // Citation.js usually renders DOI/URL as <a href="...">...</a> at the end.
+            // We remove those anchors and any trailing punctuation before them.
+            cslEntry.querySelectorAll('a').forEach(a => {
+              const prev = a.previousSibling;
+              if (prev && prev.nodeType === Node.TEXT_NODE) {
+                // Strip trailing spaces and punctuation before the link
+                prev.textContent = prev.textContent.replace(/[\s.,:;]*$/, '');
+                if (!prev.textContent.trim()) {
+                  prev.remove();
+                }
+              }
+              a.remove(); // remove the anchor and its URL text
+            });
+
             const li = document.createElement('li');
             // Bold the surname "Bose" in the citation
-            let entryHtml = cslEntry.innerHTML.replace(/Bose, S./g, '<strong>Bose, S.</strong>');
+            let entryHtml = cslEntry.innerHTML.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
             li.innerHTML = entryHtml;
+
             // Add buttons for PDF, article page, and BibTeX
             const linksDiv = document.createElement('div');
             linksDiv.className = 'pub-links';
+
             // Determine PDF link: eprint or URL or DOI
-            const pdfUrl = fields.eprint || fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            const pdfUrl = fields.eprint || fields.url || fields.URL ||
+                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (pdfUrl) {
               const aPdf = document.createElement('a');
               aPdf.textContent = 'PDF';
@@ -173,8 +196,10 @@
               aPdf.className = 'pub-btn';
               linksDiv.appendChild(aPdf);
             }
+
             // Determine article page link: URL or DOI
-            const webUrl = fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            const webUrl = fields.url || fields.URL ||
+                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (webUrl) {
               const aWeb = document.createElement('a');
               aWeb.textContent = 'Article page';
@@ -184,6 +209,7 @@
               aWeb.className = 'pub-btn';
               linksDiv.appendChild(aWeb);
             }
+
             // Generate a downloadable BibTeX file for this entry
             const key = extractBibKey(entry);
             const aBib = document.createElement('a');
@@ -193,18 +219,22 @@
             aBib.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(bibContent);
             aBib.download = key + '.bib';
             linksDiv.appendChild(aBib);
+
             li.appendChild(linksDiv);
             ol.appendChild(li);
           });
+
           container.appendChild(ol);
         }
-        renderList(categories.peer, 'In Peer‑Reviewed Journals');
+
+        renderList(categories.peer, 'In Peer-Reviewed Journals');
         renderList(categories.thesis, 'Theses');
       } catch (err) {
         console.error(err);
         container.textContent = 'Unable to load publications. Please check your .bib file.';
       }
     }
+
     document.addEventListener('DOMContentLoaded', loadPublications);
   </script>
 </body>
