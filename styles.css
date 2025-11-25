@@ -178,3 +178,36 @@ footer {
   color: #666;
   margin-top: 2rem;
 }
+
+/* Subheadings for publication categories */
+.main-content h3 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Container for the three small buttons under each reference */
+.pub-links {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Individual small pill-style buttons */
+.pub-btn {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  text-decoration: none;
+  color: #333;
+}
+
+.pub-btn:hover {
+  background: #e9ecef;
+  border-color: #999;
+}
+
