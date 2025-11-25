@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sankhadeep Bose – Publications</title>
+  <!--
+    Publications page: loads a BibTeX file and formats entries using Citation.js.
+    Uses APA citation style and groups entries into peer‑reviewed journals and theses.
+    Includes PDF, Article page and BibTeX buttons for each entry.
+  -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Icon fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar will be injected here -->
+    <div id="sidebar-container"></div>
+    <!-- Main content area -->
+    <div class="main-content">
+      <!-- Header will be injected here -->
+      <div id="header-container"></div>
+      <!-- Primary navigation -->
+      <nav>
+        <ul>
+          <li><a href="index.html">About</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="publications.html" class="active">Publications</a></li>
+        </ul>
+      </nav>
+      <main>
+        <section id="publications">
+          <h2>Publications</h2>
+          <div id="pub-list">Loading publications…</div>
+        </section>
+      </main>
+      <footer>
+        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+  <!-- Load shared components (sidebar and header) -->
+  <script src="components.js"></script>
+  <!-- Load Citation.js bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
+  <script>
+    /*
+      Load the Citation.js library via CommonJS. The global bundle defines a
+      `require` function that exposes Citation.js as a module. Using
+      require('citation-js') returns the Cite constructor, whereas
+      `window.Cite` is undefined in browser releases. See the
+      Citation.js documentation for details【497923767640375†L208-L214】. By
+      importing with require(), we ensure the library is available and avoid
+      errors that prevent the bibliography from rendering.
+    */
+    const Cite = require('citation-js');
+
+    // Parse BibTeX fields into a simple object
+    function parseBibFields(entry) {
+      const fields = {};
+      const bodyStart = entry.indexOf('{');
+      if (bodyStart === -1) return fields;
+      const body = entry.slice(bodyStart + 1);
+      const lines = body.split(/\n/);
+      for (let line of lines) {
+        line = line.trim();
+        if (line.startsWith('}')) break;
+        const m = line.match(/^([A-Za-z]+)\s*=\s*[{"'](.+?)["'}],?\s*$/);
+        if (m) {
+          const key = m[1].toLowerCase();
+          const value = m[2].trim();
+          fields[key] = value;
+        }
+      }
+      return fields;
+    }
+
+    // Convert month field to numeric month (1-12)
+    function parseMonth(raw) {
+      if (!raw) return 0;
+      const num = parseInt(raw, 10);
+      if (!isNaN(num)) return num;
+      const short = raw.toLowerCase().slice(0, 3);
+      const map = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6,
+                    jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
+      return map[short] || 0;
+    }
+
+    // Extract the BibTeX key from an entry (for file names)
+    function extractBibKey(entry) {
+      const m = entry.match(/^@\w+\s*{\s*([^,]+),/);
+      return m ? m[1].trim() : 'entry';
+    }
+
+    async function loadPublications() {
+      const container = document.getElementById('pub-list');
+      try {
+        const response = await fetch('publications.bib');
+        if (!response.ok) {
+          throw new Error('Network error ' + response.status);
+        }
+        let bibText = await response.text();
+        // Remove lines starting with '%' (BibTeX comments)
+        bibText = bibText.replace(/^\s*%.*$/gm, '').trim();
+        if (!bibText) {
+          throw new Error('BibTeX file is empty after removing comments.');
+        }
+        // Split entries by newline + '@'
+        const rawEntries = bibText.split(/\n@/).filter(e => e.trim());
+        const entries = rawEntries.map(e => {
+          const trimmed = e.trim();
+          return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
+        });
+        // Categorize entries: peer-reviewed articles and theses
+        const categories = { peer: [], thesis: [] };
+        entries.forEach(entry => {
+          const typeMatch = entry.match(/^@(\w+)/i);
+          const type = typeMatch ? typeMatch[1].toLowerCase() : '';
+          const fields = parseBibFields(entry);
+          const year = fields.year ? parseInt(fields.year, 10) : 0;
+          const month = parseMonth(fields.month);
+          const item = { entry, fields, year, month };
+          if (type === 'article') {
+            categories.peer.push(item);
+          } else if (type.includes('thesis')) {
+            categories.thesis.push(item);
+          } else {
+            categories.peer.push(item);
+          }
+        });
+        // Sort by year (desc) then month (desc)
+        const sortDesc = (a, b) => {
+          if (b.year !== a.year) return b.year - a.year;
+          return b.month - a.month;
+        };
+        categories.peer.sort(sortDesc);
+        categories.thesis.sort(sortDesc);
+        // Clear container
+        container.innerHTML = '';
+        // Render lists for each category
+        function renderList(items, heading) {
+          if (!items.length) return;
+          const h3 = document.createElement('h3');
+          h3.textContent = heading;
+          container.appendChild(h3);
+          const ol = document.createElement('ol');
+          ol.setAttribute('reversed', '');
+          ol.start = items.length;
+          items.forEach(({ entry, fields }) => {
+            // Format using APA style (built into Citation.js)
+            const cite = new Cite(entry);
+            const html = cite.format('bibliography', { format: 'html', template: 'apa', lang: 'en-US' });
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const cslEntry = temp.querySelector('.csl-entry') || temp;
+            const li = document.createElement('li');
+            // Bold the surname "Bose" in the citation
+            let entryHtml = cslEntry.innerHTML.replace(/Bose/g, '<strong>Bose</strong>');
+            li.innerHTML = entryHtml;
+            // Add buttons for PDF, article page, and BibTeX
+            const linksDiv = document.createElement('div');
+            linksDiv.className = 'pub-links';
+            // Determine PDF link: eprint or URL or DOI
+            const pdfUrl = fields.eprint || fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            if (pdfUrl) {
+              const aPdf = document.createElement('a');
+              aPdf.textContent = 'PDF';
+              aPdf.href = pdfUrl;
+              aPdf.target = '_blank';
+              aPdf.rel = 'noopener';
+              aPdf.className = 'pub-btn';
+              linksDiv.appendChild(aPdf);
+            }
+            // Determine article page link: URL or DOI
+            const webUrl = fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            if (webUrl) {
+              const aWeb = document.createElement('a');
+              aWeb.textContent = 'Article page';
+              aWeb.href = webUrl;
+              aWeb.target = '_blank';
+              aWeb.rel = 'noopener';
+              aWeb.className = 'pub-btn';
+              linksDiv.appendChild(aWeb);
+            }
+            // Generate a downloadable BibTeX file for this entry
+            const key = extractBibKey(entry);
+            const aBib = document.createElement('a');
+            aBib.textContent = 'BibTeX';
+            aBib.className = 'pub-btn';
+            const bibContent = entry.trim() + '\n';
+            aBib.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(bibContent);
+            aBib.download = key + '.bib';
+            linksDiv.appendChild(aBib);
+            li.appendChild(linksDiv);
+            ol.appendChild(li);
+          });
+          container.appendChild(ol);
+        }
+        renderList(categories.peer, 'In Peer‑Reviewed Journals');
+        renderList(categories.thesis, 'Theses');
+      } catch (err) {
+        console.error(err);
+        container.textContent = 'Unable to load publications. Please check your .bib file.';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadPublications);
+  </script>
+</body>
+</html>
