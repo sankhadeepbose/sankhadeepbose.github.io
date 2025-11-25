@@ -6,13 +6,14 @@
   <title>Sankhadeep Bose – Publications</title>
   <!--
     Minimal academic website: publications page.
-    Publications are loaded from a BibTeX file and formatted using Citation.js.
+    Publications are loaded from a BibTeX file and formatted using Citation.js
+    with the AIP CSL style from Zotero.
   -->
   <link rel="stylesheet" href="styles.css">
   <!-- Font Awesome for icons -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Academicons for Google Scholar icon -->
+  <!-- Academicons for Google Scholar / ORCID icons -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
 </head>
@@ -21,6 +22,7 @@
     <!-- Sidebar with photo and contact links -->
     <aside class="sidebar">
       <img src="images/profile.jpg" alt="Profile photo">
+
       <div class="contact-links">
         <!-- Google Scholar icon -->
         <a href="[https://scholar.google.com/citations?user=YOUR_ID]"
@@ -48,6 +50,7 @@
           <i class="fab fa-github"></i>
         </a>
       </div>
+
       <!-- Explicit email address below the icons -->
       <p class="contact-email">
         <i class="fas fa-envelope"></i> bose.sankhadeep@pm.me
@@ -84,21 +87,89 @@
     </div>
   </div>
 
-  <!-- Load Citation.js (monolithic bundle including BibTeX + CSL) -->
+  <!-- Monolithic Citation.js (includes BibTeX + CSL plugins) -->
   <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
 
   <script>
-    /*
-      Fetch the BibTeX file and render it as an HTML bibliography.
-      We use the monolithic 'citation-js' bundle, which includes BibTeX and CSL
-      plugins, so template: 'apa' works.
-    */
-    const Cite = require('citation-js');
+    const Cite = window.Cite;
+    if (!Cite) {
+      console.error('Citation.js did not load correctly.');
+    }
 
-    async function loadPublications() {
+    // Load and register the AIP CSL style from Zotero
+    let aipTemplateLoaded = false;
+    async function ensureAIPTemplate () {
+      if (aipTemplateLoaded) return;
+
+      const config = Cite.plugins.config.get('csl');
+      try {
+        if (config.templates.has && config.templates.has('aip')) {
+          aipTemplateLoaded = true;
+          return;
+        }
+      } catch (e) {
+        // if .has is not available, we just proceed to load
+      }
+
+      const res = await fetch('https://www.zotero.org/styles/american-institute-of-physics');
+      if (!res.ok) {
+        throw new Error('Failed to fetch AIP CSL style: ' + res.status);
+      }
+      const style = await res.text();
+      config.templates.add('aip', style);
+      aipTemplateLoaded = true;
+    }
+
+    // Very simple BibTeX field parser (enough for our limited, clean entries)
+    function parseBibFields (entry) {
+      const fields = {};
+      // Strip leading '@type{key,' part
+      const bodyStart = entry.indexOf('{');
+      if (bodyStart === -1) return fields;
+      const body = entry.slice(bodyStart + 1);
+
+      // Split on newlines; parse lines of the form: key = {value},
+      const lines = body.split(/\n/);
+      for (let line of lines) {
+        line = line.trim();
+        // stop at closing brace
+        if (line.startsWith('}')) break;
+        const m = line.match(/^([A-Za-z]+)\s*=\s*[{"](.+?)[}"],?\s*$/);
+        if (m) {
+          const key = m[1].toLowerCase();
+          const value = m[2].trim();
+          fields[key] = value;
+        }
+      }
+      return fields;
+    }
+
+    // Convert month field (string or number) to numeric month
+    function parseMonth (monthRaw) {
+      if (!monthRaw) return 0;
+      const mNum = parseInt(monthRaw, 10);
+      if (!isNaN(mNum)) return mNum;
+
+      const short = monthRaw.toLowerCase().slice(0, 3);
+      const map = {
+        jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+        jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+      };
+      return map[short] || 0;
+    }
+
+    // Extract BibTeX key from entry
+    function extractBibKey (entry) {
+      const m = entry.match(/^@\w+\s*\{\s*([^,]+),/);
+      return m ? m[1].trim() : 'entry';
+    }
+
+    async function loadPublications () {
       const container = document.getElementById('pub-list');
 
       try {
+        await ensureAIPTemplate();
+
         const response = await fetch('publications.bib');
         if (!response.ok) {
           throw new Error('Network response was not ok (status ' + response.status + ')');
@@ -106,47 +177,51 @@
 
         let bibText = await response.text();
 
-        // Remove comment lines that start with '%'
+        // Remove comment lines starting with '%' and trim
         bibText = bibText.replace(/^\s*%.*$/gm, '').trim();
         if (!bibText) {
           throw new Error('BibTeX file is empty after removing comments.');
         }
 
-        // Split the BibTeX text into individual entries on lines that start with '@'
+        // Split into entries on newline + '@'
         const rawEntries = bibText.split(/\n@/).filter(e => e.trim());
         const entries = rawEntries.map(entry => {
           const trimmed = entry.trim();
           return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
         });
 
-        // Categorise entries into peer-reviewed articles and theses, capturing year for sorting.
         const categories = { peer: [], thesis: [] };
 
         entries.forEach(entry => {
           const typeMatch = entry.match(/^@(\w+)/i);
           const type = typeMatch ? typeMatch[1].toLowerCase() : '';
-          const yearMatch = entry.match(/year\s*=\s*\{?(\d{4})/i);
-          const year = yearMatch ? parseInt(yearMatch[1], 10) : 0;
+          const fields = parseBibFields(entry);
+          const year = fields.year ? parseInt(fields.year, 10) : 0;
+          const month = parseMonth(fields.month);
+
+          const item = { entry, fields, year, month };
 
           if (type === 'article') {
-            categories.peer.push({ entry, year });
+            categories.peer.push(item);
           } else if (type.includes('thesis')) {
-            categories.thesis.push({ entry, year });
+            categories.thesis.push(item);
           } else {
-            // Fallback: treat unknown types as peer-reviewed
-            categories.peer.push({ entry, year });
+            categories.peer.push(item); // fallback
           }
         });
 
-        // Sort each category by descending year
-        const sortDesc = (a, b) => b.year - a.year;
+        // Sort by (year desc, month desc)
+        const sortDesc = (a, b) => {
+          if (b.year !== a.year) return b.year - a.year;
+          return b.month - a.month;
+        };
         categories.peer.sort(sortDesc);
         categories.thesis.sort(sortDesc);
 
-        // Clear the container before rendering
+        // Clear container
         container.innerHTML = '';
 
-        // Helper to render one category with a heading and reversed numbering
+        // Helper to render one category
         const renderList = (items, headingText) => {
           if (!items.length) return;
 
@@ -155,16 +230,17 @@
           container.appendChild(h3);
 
           const ol = document.createElement('ol');
-          // reversed numbering: largest number at the top
           ol.setAttribute('reversed', '');
           ol.start = items.length;
 
-          items.forEach(({ entry }) => {
-            // Use Citation.js to format each entry in APA style
+          items.forEach(item => {
+            const { entry, fields } = item;
+
+            // ---- Format citation in AIP style via CSL template 'aip' ----
             const cite = new Cite(entry);
             const html = cite.format('bibliography', {
               format: 'html',
-              template: 'apa',
+              template: 'aip',
               lang: 'en-US'
             });
 
@@ -174,13 +250,59 @@
 
             const li = document.createElement('li');
             li.innerHTML = cslEntry.innerHTML;
+
+            // ---- Buttons: PDF, Article page, BibTeX ----
+            const linksDiv = document.createElement('div');
+            linksDiv.className = 'pub-links';
+
+            // 1) PDF: prefer 'eprint' (often a PDF or DOI), fall back to URL/doi if missing
+            const pdfUrl = fields.eprint ||
+                           fields.url ||
+                           fields.url?.toLowerCase?.() ||
+                           fields.doi && ('https://doi.org/' + fields.doi);
+
+            if (pdfUrl) {
+              const aPdf = document.createElement('a');
+              aPdf.textContent = 'PDF';
+              aPdf.href = pdfUrl;
+              aPdf.target = '_blank';
+              aPdf.rel = 'noopener';
+              aPdf.className = 'pub-btn';
+              linksDiv.appendChild(aPdf);
+            }
+
+            // 2) Article page: use URL or DOI
+            const webUrl = fields.url ||
+                           fields.URL ||
+                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            if (webUrl) {
+              const aWeb = document.createElement('a');
+              aWeb.textContent = 'Article page';
+              aWeb.href = webUrl;
+              aWeb.target = '_blank';
+              aWeb.rel = 'noopener';
+              aWeb.className = 'pub-btn';
+              linksDiv.appendChild(aWeb);
+            }
+
+            // 3) BibTeX: construct a downloadable blob from this entry
+            const key = extractBibKey(entry);
+            const aBib = document.createElement('a');
+            aBib.textContent = 'BibTeX';
+            aBib.className = 'pub-btn';
+            const bibContent = entry.trim() + '\n';
+            aBib.href = 'data:text/plain;charset=utf-8,' +
+                        encodeURIComponent(bibContent);
+            aBib.download = key + '.bib';
+            linksDiv.appendChild(aBib);
+
+            li.appendChild(linksDiv);
             ol.appendChild(li);
           });
 
           container.appendChild(ol);
         };
 
-        // Render peer-reviewed journals and theses
         renderList(categories.peer, 'In Peer-Reviewed Journals');
         renderList(categories.thesis, 'Theses');
       } catch (err) {
