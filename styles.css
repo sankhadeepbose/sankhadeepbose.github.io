@@ -94,6 +94,14 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Short tagline under profile image in sidebar */
+.sidebar-tagline {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: var(--font-size-base);   /* same as main body text */
+  color: var(--color-muted);
+}
+
 .contact-links {
   margin-top: 1rem;
   display: flex;
@@ -220,14 +228,38 @@ footer {
 
 /* Contact email styling */
 .contact-email {
-  margin-top: 0.5rem;
-  font-size: var(--font-size-text-small);
+  margin-top: 0.75rem;
+  font-size: var(--font-size-base);       /* same size as tagline */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* Email icon (only clickable element) */
+.contact-email-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-text);
+  text-decoration: none;
+}
+
+.contact-email-icon:hover {
+  color: var(--color-primary);
 }
 
 /* Icon inside the contact email line */
 .contact-email i {
-  margin-right: 0.4rem;
+  margin-right: 0;                        /* no extra gap, handled by flex gap */
+  font-size: 1.5rem;                      /* same as top icons */
+  vertical-align: middle;
+  color: var(--color-text);
+}
+
+/* Email text (not clickable) */
+.contact-email-text {
+  font-size: var(--font-size-base);
   color: var(--color-text);
 }
 
