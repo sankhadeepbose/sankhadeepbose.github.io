@@ -33,17 +33,17 @@
   --sidebar-width: 260px;
   --profile-image-size: 160px;
 
-  --color-background: #f6f3ee;    /* warm paper */
+  --color-background: #f5f2eb;    /* warm paper */
   --color-sidebar-bg: #ffffff;
   --color-main-bg: #ffffff;
-  --color-text: #2d2a24;          /* dark warm grey/brown */
-  --color-muted: #756f63;         /* muted warm text */
-  --color-border: #e0d7c8;
-  --color-nav-border: #d6cbb9;
-  --color-primary: #b35c1e;       /* rust accent, can be toned down */
-  --color-hover-bg: #e9dfd1;
-  --color-footer-bg: #f6f3ee;
-  --color-footer-text: #756f63;
+  --color-text: #2b2620;          /* dark warm grey */
+  --color-muted: #7a7267;         /* muted warm text */
+  --color-border: #e2d7c8;
+  --color-nav-border: #d6c7b5;
+  --color-primary: #b45309;       /* burnt orange accent */
+  --color-hover-bg: #efe3d3;
+  --color-footer-bg: #f5f2eb;
+  --color-footer-text: #7a7267;
 }
 
 
