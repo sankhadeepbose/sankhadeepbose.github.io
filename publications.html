@@ -192,9 +192,24 @@
             const linksDiv = document.createElement('div');
             linksDiv.className = 'pub-links';
 
-            // Determine PDF link: eprint or URL or DOI
-            const pdfUrl = fields.eprint || fields.url || fields.URL ||
-                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            // Determine PDF link:
+            //  - For theses: always use the known Zenodo PDF
+            //  - For specific ACS papers: use the given links
+            //  - For others: eprint or URL or DOI
+            let pdfUrl;
+            if (heading === 'Theses') {
+              pdfUrl = 'https://zenodo.org/records/3911784/files/Thesis_Sankhadeep_Bose_2020.pdf?download=1';
+            } else if (fields.doi === '10.1021/acsnano.0c05892') {
+              // ACS Nano 2021
+              pdfUrl = 'https://repository.lincoln.ac.uk/ndownloader/files/42850540';
+            } else if (fields.doi === '10.1021/acsomega.4c11379') {
+              // ACS Omega 2025
+              pdfUrl = 'https://pubs.acs.org/doi/pdf/10.1021/acsomega.4c11379?ref=article_openPDF';
+            } else {
+              pdfUrl = fields.eprint || fields.url || fields.URL ||
+                       (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            }
+
             if (pdfUrl) {
               const aPdf = document.createElement('a');
               aPdf.textContent = 'PDF';
@@ -205,7 +220,7 @@
               linksDiv.appendChild(aPdf);
             }
 
-            // Determine article page link: URL or DOI
+            // Determine article page link: URL or DOI (for both articles and thesis)
             const webUrl = fields.url || fields.URL ||
                            (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (webUrl) {
