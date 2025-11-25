@@ -182,6 +182,14 @@
             // Tidy up any multiple spaces left behind
             entryHtml = entryHtml.replace(/\s{2,}/g, ' ').trim();
 
+            // For theses, explicitly label the work as a Master's thesis
+            if (heading === 'Theses') {
+              entryHtml = entryHtml.replace(
+                'Vellore Institute of Technology',
+                "Master's thesis, Vellore Institute of Technology"
+              );
+            }
+
             // Bold the surname "Bose" in the citation
             entryHtml = entryHtml.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
 
