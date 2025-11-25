@@ -110,6 +110,7 @@
           const trimmed = e.trim();
           return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
         });
+
         // Categorize entries: peer-reviewed articles and theses
         const categories = { peer: [], thesis: [] };
         entries.forEach(entry => {
@@ -127,6 +128,7 @@
             categories.peer.push(item);
           }
         });
+
         // Sort by year (desc) then month (desc)
         const sortDesc = (a, b) => {
           if (b.year !== a.year) return b.year - a.year;
@@ -134,6 +136,7 @@
         };
         categories.peer.sort(sortDesc);
         categories.thesis.sort(sortDesc);
+
         // Clear container
         container.innerHTML = '';
 
@@ -143,6 +146,7 @@
           const h3 = document.createElement('h3');
           h3.textContent = heading;
           container.appendChild(h3);
+
           const ol = document.createElement('ol');
           ol.setAttribute('reversed', '');
           ol.start = items.length;
@@ -160,24 +164,28 @@
             temp.innerHTML = html;
             const cslEntry = temp.querySelector('.csl-entry') || temp;
 
-            // Remove DOI/URL part from the formatted reference:
-            // Citation.js usually renders DOI/URL as <a href="...">...</a> at the end.
-            // We remove those anchors and any trailing punctuation before them.
-            cslEntry.querySelectorAll('a').forEach(a => {
-              const prev = a.previousSibling;
-              if (prev && prev.nodeType === Node.TEXT_NODE) {
-                // Strip trailing spaces and punctuation before the link
-                prev.textContent = prev.textContent.replace(/[\s.,:;]*$/, '');
-                if (!prev.textContent.trim()) {
-                  prev.remove();
-                }
-              }
-              a.remove(); // remove the anchor and its URL text
-            });
+            // 1) Remove any anchor elements (which might contain DOI/URL)
+            cslEntry.querySelectorAll('a').forEach(a => a.remove());
+
+            // 2) Get HTML as a string and strip any remaining DOI/URL text patterns
+            let entryHtml = cslEntry.innerHTML;
+
+            // Remove DOI URLs like https://doi.org/10.xxxx/xxxx
+            entryHtml = entryHtml.replace(/\s*https?:\/\/doi\.org\/[^\s<]+/gi, '');
+            // Remove plain doi.org/10.xxxx/xxxx if present
+            entryHtml = entryHtml.replace(/\s*doi\.org\/10\.[^\s<]+/gi, '');
+            // Remove "doi: 10.xxxx/xxxx" style fragments
+            entryHtml = entryHtml.replace(/\s*doi:\s*10\.[^\s<]+/gi, '');
+            // As a safety net, remove any bare URL at the very end (if still there)
+            entryHtml = entryHtml.replace(/\s*https?:\/\/[^\s<]+/gi, '');
+
+            // Tidy up any multiple spaces left behind
+            entryHtml = entryHtml.replace(/\s{2,}/g, ' ').trim();
+
+            // Bold the surname "Bose" in the citation
+            entryHtml = entryHtml.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
 
             const li = document.createElement('li');
-            // Bold the surname "Bose" in the citation
-            let entryHtml = cslEntry.innerHTML.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
             li.innerHTML = entryHtml;
 
             // Add buttons for PDF, article page, and BibTeX
