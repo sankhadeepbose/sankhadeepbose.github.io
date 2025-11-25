@@ -33,18 +33,18 @@
   --sidebar-width: 260px;
   --profile-image-size: 160px;
 
-  /* Colour scheme */
-  --color-background: #f8f9fa;
+  /* Colour scheme: cool blue/teal */
+  --color-background: #f4f7fb;    /* slightly cooler background */
   --color-sidebar-bg: #ffffff;
   --color-main-bg: #ffffff;
-  --color-text: #333333;
-  --color-muted: #666666;
-  --color-border: #e4e6e8;
-  --color-nav-border: #d3d9df;
-  --color-primary: #0077b5;
-  --color-hover-bg: #e9ecef;
-  --color-footer-bg: #f8f9fa;
-  --color-footer-text: #666666;
+  --color-text: #1f2933;          /* dark blue-grey */
+  --color-muted: #6b7280;         /* muted grey for tagline */
+  --color-border: #d5dde7;
+  --color-nav-border: #c3cfdd;
+  --color-primary: #006d77;       /* teal accent */
+  --color-hover-bg: #e0edf4;      /* soft blue hover */
+  --color-footer-bg: #f4f7fb;
+  --color-footer-text: #6b7280;
 }
 
 /*
