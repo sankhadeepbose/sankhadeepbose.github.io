@@ -252,7 +252,7 @@ footer {
 /* Icon inside the contact email line */
 .contact-email i {
   margin-right: 0;                        /* no extra gap, handled by flex gap */
-  font-size: 1.5rem;                      /* same as top icons */
+  font-size: 1.0rem;                      /* same as top icons */
   vertical-align: middle;
   color: var(--color-text);
 }
