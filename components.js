@@ -1,8 +1,14 @@
 /*
- * Dynamic component loader for the academic website.
- * Fetches the shared header and sidebar HTML fragments and injects them
- * into the page, then marks the current page's nav link as active.
+ * Dynamic component loader + theme toggle for the academic website.
  */
+
+/* ── Theme: apply saved or system preference immediately ── */
+(function () {
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  }
+})();
 
 async function loadComponent(id, url) {
   try {
@@ -15,21 +21,43 @@ async function loadComponent(id, url) {
   }
 }
 
+function isDarkActive() {
+  const attr = document.documentElement.getAttribute('data-theme');
+  if (attr === 'dark') return true;
+  if (attr === 'light') return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function syncToggleIcon() {
+  const icon = document.getElementById('theme-icon');
+  if (!icon) return;
+  icon.className = isDarkActive() ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+function toggleTheme() {
+  const next = isDarkActive() ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  syncToggleIcon();
+}
+
 async function init() {
-  // Load header first so we can set the active nav link immediately after
   await loadComponent('header-container', 'header.html');
 
-  // Mark the active nav link based on the current page filename
+  /* Mark active nav link */
   const page = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-link').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === page || (!page && href === 'index.html')) {
+    if (link.getAttribute('href') === page || (!page && link.getAttribute('href') === 'index.html')) {
       link.classList.add('active');
       link.setAttribute('aria-current', 'page');
     }
   });
 
-  // Sidebar can load in parallel (no dependencies)
+  /* Wire up toggle button */
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.addEventListener('click', toggleTheme);
+  syncToggleIcon();
+
   loadComponent('sidebar-container', 'sidebar.html');
 }
 
