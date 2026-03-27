@@ -1,35 +1,36 @@
 /*
  * Dynamic component loader for the academic website.
- *
- * This script fetches reusable HTML fragments (e.g. sidebar and header)
- * from separate files and injects them into the page. This approach
- * keeps the page templates clean and avoids duplicating markup across
- * multiple pages. When new components are added (e.g. footer or
- * additional panels), simply add another call to loadComponent() in
- * the DOMContentLoaded handler below.
+ * Fetches the shared header and sidebar HTML fragments and injects them
+ * into the page, then marks the current page's nav link as active.
  */
 
 async function loadComponent(id, url) {
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to load component from ${url}: ${response.status}`);
-    }
-    const html = await response.text();
+    if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.status}`);
     const container = document.getElementById(id);
-    if (container) {
-      container.innerHTML = html;
-    } else {
-      console.warn(`Container with id '${id}' not found in the document.`);
-    }
+    if (container) container.innerHTML = await response.text();
   } catch (err) {
     console.error(err);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Load the left sidebar into the sidebar-container
+async function init() {
+  // Load header first so we can set the active nav link immediately after
+  await loadComponent('header-container', 'header.html');
+
+  // Mark the active nav link based on the current page filename
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === page || (!page && href === 'index.html')) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
+  });
+
+  // Sidebar can load in parallel (no dependencies)
   loadComponent('sidebar-container', 'sidebar.html');
-  // Load the page header into the header-container
-  loadComponent('header-container', 'header.html');
-});
+}
+
+document.addEventListener('DOMContentLoaded', init);
