@@ -1,45 +1,43 @@
-<!-- Sidebar component: left panel with profile photo and contact links -->
-<aside class="sidebar">
-  <img src="images/profile.jpg" alt="Profile photo">
-
-  <!-- Short sidebar tagline under the image -->
-  <p class="sidebar-tagline">
-    PhD candidate with expertise in Thermodynamics, Statistical Mechanics, and Atomistic Simulation.
-  </p>
-
-  <div class="contact-links">
-    <!-- Google Scholar icon -->
-    <a href="https://scholar.google.com/citations?user=vDWwsy8AAAAJ"
-       title="Google Scholar" target="_blank" rel="noopener">
-      <i class="ai ai-google-scholar-square"></i>
-    </a>
-    <!-- ResearchGate icon -->
-    <a href="https://www.researchgate.net/profile/Sankhadeep-Bose-2"
-       title="ResearchGate" target="_blank" rel="noopener">
-      <i class="fab fa-researchgate"></i>
-    </a>
-    <!-- LinkedIn icon -->
-    <a href="https://www.linkedin.com/in/bosesankhadeep"
-       title="LinkedIn" target="_blank" rel="noopener">
-      <i class="fab fa-linkedin"></i>
-    </a>
-    <!-- ORCID icon -->
-    <a href="https://orcid.org/0000-0002-5124-5134"
-       title="ORCID" target="_blank" rel="noopener">
-      <i class="ai ai-orcid"></i>
-    </a>
-    <!-- GitHub icon -->
-    <a href="https://github.com/bose-s"
-       title="GitHub" target="_blank" rel="noopener">
-      <i class="fab fa-github"></i>
-    </a>
+<aside class="sidebar" aria-label="Profile and contact information">
+  <div class="profile-section">
+    <img src="images/profile.jpg" alt="Sankhadeep Bose" class="profile-photo">
+    <div>
+      <h2 class="profile-name">Sankhadeep Bose</h2>
+      <p class="profile-title">PhD Candidate</p>
+      <p class="profile-affiliation">School of Mechanical Engineering<br>Vellore Institute of Technology</p>
+    </div>
   </div>
 
-  <!-- Explicit email line below the icons: only the icon is clickable -->
-  <p class="contact-email">
-    <a href="mailto:bose.sankhadeep@pm.me" class="contact-email-icon">
-      <i class="fas fa-envelope"></i>
+  <nav class="contact-nav" aria-label="Contact and academic profiles">
+    <a href="mailto:bose.sankhadeep@pm.me" class="contact-link">
+      <i class="fas fa-envelope" aria-hidden="true"></i>
+      <span>bose.sankhadeep@pm.me</span>
     </a>
-    <span class="contact-email-text">bose.sankhadeep@pm.me</span>
-  </p>
+    <div class="sidebar-divider" role="separator"></div>
+    <a href="https://scholar.google.com/citations?user=vDWwsy8AAAAJ" class="contact-link"
+       target="_blank" rel="noopener" aria-label="Google Scholar profile (opens in new tab)">
+      <i class="ai ai-google-scholar" aria-hidden="true"></i>
+      <span>Google Scholar</span>
+    </a>
+    <a href="https://orcid.org/0000-0002-5124-5134" class="contact-link"
+       target="_blank" rel="noopener" aria-label="ORCID profile (opens in new tab)">
+      <i class="ai ai-orcid" aria-hidden="true"></i>
+      <span>ORCID</span>
+    </a>
+    <a href="https://www.researchgate.net/profile/Sankhadeep-Bose-2" class="contact-link"
+       target="_blank" rel="noopener" aria-label="ResearchGate profile (opens in new tab)">
+      <i class="fab fa-researchgate" aria-hidden="true"></i>
+      <span>ResearchGate</span>
+    </a>
+    <a href="https://www.linkedin.com/in/bosesankhadeep" class="contact-link"
+       target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in new tab)">
+      <i class="fab fa-linkedin" aria-hidden="true"></i>
+      <span>LinkedIn</span>
+    </a>
+    <a href="https://github.com/bose-s" class="contact-link"
+       target="_blank" rel="noopener" aria-label="GitHub profile (opens in new tab)">
+      <i class="fab fa-github" aria-hidden="true"></i>
+      <span>GitHub</span>
+    </a>
+  </nav>
 </aside>
