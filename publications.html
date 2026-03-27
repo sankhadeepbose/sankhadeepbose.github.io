@@ -4,88 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sankhadeep Bose – Publications</title>
-  <!--
-    Publications page: loads a BibTeX file and formats entries using Citation.js.
-    Uses APA citation style and groups entries into peer-reviewed journals and theses.
-    Includes PDF, Article page and BibTeX buttons for each entry.
-  -->
+  <meta name="description" content="Publications list of Sankhadeep Bose, PhD candidate in Thermodynamics and Atomistic Simulation.">
   <link rel="stylesheet" href="styles.css">
-  <!-- Icon fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Sidebar will be injected here -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Sticky navigation header (loaded dynamically) -->
+  <div id="header-container"></div>
+
+  <div class="page-wrapper">
+    <!-- Profile sidebar (loaded dynamically) -->
     <div id="sidebar-container"></div>
-    <!-- Main content area -->
-    <div class="main-content">
-      <!-- Header will be injected here -->
-      <div id="header-container"></div>
-      <!-- Primary navigation -->
-      <nav>
-        <ul>
-          <li><a href="index.html">About</a></li>
-          <li><a href="research.html">Research</a></li>
-          <li><a href="publications.html" class="active">Publications</a></li>
-        </ul>
-      </nav>
-      <main>
-        <section id="publications">
-          <h2>Publications</h2>
-          <div id="pub-list">Loading publications…</div>
-        </section>
-      </main>
-      <footer>
-        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
-      </footer>
-    </div>
+
+    <main class="main-content" id="main-content">
+      <div class="content-section">
+        <p class="section-label">Publications</p>
+        <div id="pub-list"><p class="loading-msg">Loading publications…</p></div>
+      </div>
+    </main>
   </div>
-  <!-- Load shared components (sidebar and header) -->
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
+  </footer>
+
   <script src="components.js"></script>
-  <!-- Load Citation.js bundle -->
   <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
   <script>
-    /*
-      Load the Citation.js library via CommonJS. The global bundle defines a
-      `require` function that exposes Citation.js as a module. Using
-      require('citation-js') returns the Cite constructor, whereas
-      `window.Cite` is undefined in browser releases.
-    */
     const Cite = require('citation-js');
 
-    // Parse BibTeX fields into a simple object
     function parseBibFields(entry) {
       const fields = {};
       const bodyStart = entry.indexOf('{');
       if (bodyStart === -1) return fields;
-      const body = entry.slice(bodyStart + 1);
-      const lines = body.split(/\n/);
-      for (let line of lines) {
-        line = line.trim();
-        if (line.startsWith('}')) break;
-        const m = line.match(/^([A-Za-z]+)\s*=\s*[{"'](.+?)["'}],?\s*$/);
-        if (m) {
-          const key = m[1].toLowerCase();
-          const value = m[2].trim();
-          fields[key] = value;
-        }
+      for (const line of entry.slice(bodyStart + 1).split(/\n/)) {
+        const t = line.trim();
+        if (t.startsWith('}')) break;
+        const m = t.match(/^([A-Za-z]+)\s*=\s*[{"'](.+?)["'}],?\s*$/);
+        if (m) fields[m[1].toLowerCase()] = m[2].trim();
       }
       return fields;
     }
 
-    // Convert month field to numeric month (1-12)
     function parseMonth(raw) {
       if (!raw) return 0;
-      const num = parseInt(raw, 10);
-      if (!isNaN(num)) return num;
-      const short = raw.toLowerCase().slice(0, 3);
-      const map = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6,
-                    jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
-      return map[short] || 0;
+      const n = parseInt(raw, 10);
+      if (!isNaN(n)) return n;
+      const map = { jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
+      return map[raw.toLowerCase().slice(0, 3)] || 0;
     }
 
-    // Extract the BibTeX key from an entry (for file names)
     function extractBibKey(entry) {
       const m = entry.match(/^@\w+\s*{\s*([^,]+),/);
       return m ? m[1].trim() : 'entry';
@@ -94,179 +65,134 @@
     async function loadPublications() {
       const container = document.getElementById('pub-list');
       try {
-        const response = await fetch('publications.bib');
-        if (!response.ok) {
-          throw new Error('Network error ' + response.status);
-        }
-        let bibText = await response.text();
-        // Remove lines starting with '%' (BibTeX comments)
-        bibText = bibText.replace(/^\s*%.*$/gm, '').trim();
-        if (!bibText) {
-          throw new Error('BibTeX file is empty after removing comments.');
-        }
-        // Split entries by newline + '@'
-        const rawEntries = bibText.split(/\n@/).filter(e => e.trim());
-        const entries = rawEntries.map(e => {
-          const trimmed = e.trim();
-          return trimmed.startsWith('@') ? trimmed : '@' + trimmed;
+        const res = await fetch('publications.bib');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        let bib = (await res.text()).replace(/^\s*%.*$/gm, '').trim();
+        if (!bib) throw new Error('Empty bib file');
+
+        const entries = bib.split(/\n@/).filter(e => e.trim()).map(e => {
+          const t = e.trim();
+          return t.startsWith('@') ? t : '@' + t;
         });
 
-        // Categorize entries: peer-reviewed articles and theses
-        const categories = { peer: [], thesis: [] };
+        const cats = { peer: [], thesis: [] };
         entries.forEach(entry => {
-          const typeMatch = entry.match(/^@(\w+)/i);
-          const type = typeMatch ? typeMatch[1].toLowerCase() : '';
+          const typeM  = entry.match(/^@(\w+)/i);
+          const type   = typeM ? typeM[1].toLowerCase() : '';
           const fields = parseBibFields(entry);
-          const year = fields.year ? parseInt(fields.year, 10) : 0;
-          const month = parseMonth(fields.month);
-          const item = { entry, fields, year, month };
-          if (type === 'article') {
-            categories.peer.push(item);
-          } else if (type.includes('thesis')) {
-            categories.thesis.push(item);
-          } else {
-            categories.peer.push(item);
-          }
+          const item   = { entry, fields, year: parseInt(fields.year, 10) || 0, month: parseMonth(fields.month) };
+          (type.includes('thesis') ? cats.thesis : cats.peer).push(item);
         });
 
-        // Sort by year (desc) then month (desc)
-        const sortDesc = (a, b) => {
-          if (b.year !== a.year) return b.year - a.year;
-          return b.month - a.month;
-        };
-        categories.peer.sort(sortDesc);
-        categories.thesis.sort(sortDesc);
+        const sortDesc = (a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month;
+        cats.peer.sort(sortDesc);
+        cats.thesis.sort(sortDesc);
 
-        // Clear container
         container.innerHTML = '';
 
-        // Render lists for each category
         function renderList(items, heading) {
           if (!items.length) return;
-          const h3 = document.createElement('h3');
-          h3.textContent = heading;
-          container.appendChild(h3);
+
+          const h2 = document.createElement('h2');
+          h2.className = 'pub-category-heading';
+          h2.innerHTML = heading + ` <span class="pub-count" aria-label="${items.length} entries">${items.length}</span>`;
+          container.appendChild(h2);
 
           const ol = document.createElement('ol');
+          ol.className = 'pub-list';
           ol.setAttribute('reversed', '');
-          ol.start = items.length;
 
           items.forEach(({ entry, fields }) => {
-            // Format using APA style (built into Citation.js)
             const cite = new Cite(entry);
-            const html = cite.format('bibliography', {
-              format: 'html',
-              template: 'apa',
-              lang: 'en-US'
-            });
+            let html = cite.format('bibliography', { format: 'html', template: 'apa', lang: 'en-US' });
 
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            const cslEntry = temp.querySelector('.csl-entry') || temp;
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const cslEl = tmp.querySelector('.csl-entry') || tmp;
+            cslEl.querySelectorAll('a').forEach(a => a.remove());
+            let h = cslEl.innerHTML;
+            h = h.replace(/\s*https?:\/\/doi\.org\/[^\s<]+/gi, '')
+                 .replace(/\s*doi\.org\/10\.[^\s<]+/gi, '')
+                 .replace(/\s*doi:\s*10\.[^\s<]+/gi, '')
+                 .replace(/\s*https?:\/\/[^\s<]+/gi, '')
+                 .replace(/\s{2,}/g, ' ').trim();
 
-            // 1) Remove any anchor elements (which might contain DOI/URL)
-            cslEntry.querySelectorAll('a').forEach(a => a.remove());
-
-            // 2) Get HTML as a string and strip any remaining DOI/URL text patterns
-            let entryHtml = cslEntry.innerHTML;
-
-            // Remove DOI URLs like https://doi.org/10.xxxx/xxxx
-            entryHtml = entryHtml.replace(/\s*https?:\/\/doi\.org\/[^\s<]+/gi, '');
-            // Remove plain doi.org/10.xxxx/xxxx if present
-            entryHtml = entryHtml.replace(/\s*doi\.org\/10\.[^\s<]+/gi, '');
-            // Remove "doi: 10.xxxx/xxxx" style fragments
-            entryHtml = entryHtml.replace(/\s*doi:\s*10\.[^\s<]+/gi, '');
-            // As a safety net, remove any bare URL at the very end (if still there)
-            entryHtml = entryHtml.replace(/\s*https?:\/\/[^\s<]+/gi, '');
-
-            // Tidy up any multiple spaces left behind
-            entryHtml = entryHtml.replace(/\s{2,}/g, ' ').trim();
-
-            // For theses, explicitly label the work as a Master's thesis
             if (heading === 'Theses') {
-              entryHtml = entryHtml.replace(
-                'Vellore Institute of Technology',
-                "Master's thesis, Vellore Institute of Technology"
-              );
+              h = h.replace('Vellore Institute of Technology',
+                            "Master's thesis, Vellore Institute of Technology");
             }
-
-            // Bold the surname "Bose" in the citation
-            entryHtml = entryHtml.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
+            h = h.replace(/Bose, S\./g, '<strong>Bose, S.</strong>');
 
             const li = document.createElement('li');
-            li.innerHTML = entryHtml;
+            li.className = 'pub-item';
 
-            // Add buttons for PDF, article page, and BibTeX
+            const numSpan = document.createElement('span');
+            numSpan.className = 'pub-num';
+
+            const body = document.createElement('div');
+            body.className = 'pub-body';
+
+            const citP = document.createElement('p');
+            citP.className = 'pub-citation';
+            citP.innerHTML = h;
+
             const linksDiv = document.createElement('div');
             linksDiv.className = 'pub-links';
 
-            // Determine PDF link:
-            //  - For theses: always use the known Zenodo PDF
-            //  - For specific ACS papers: use the given links
-            //  - For others: eprint or URL or DOI
             let pdfUrl;
-              if (heading === 'Theses') {
+            if (heading === 'Theses') {
               pdfUrl = 'https://zenodo.org/records/3911784/files/Thesis_Sankhadeep_Bose_2020.pdf?download=1';
-              } else if (fields.doi === '10.1021/acsnano.0c05892') {
-            // ACS Nano 2021
+            } else if (fields.doi === '10.1021/acsnano.0c05892') {
               pdfUrl = 'https://repository.lincoln.ac.uk/ndownloader/files/42850540';
-              } else if (fields.doi === '10.1021/acsomega.4c11379') {
-            // ACS Omega 2025
+            } else if (fields.doi === '10.1021/acsomega.4c11379') {
               pdfUrl = 'https://pubs.acs.org/doi/pdf/10.1021/acsomega.4c11379?ref=article_openPDF';
-              } else if (fields.doi === '10.1063/5.0280263') {
-            // J. Chem. Phys. 2025 – "When does a nanoparticle become a cluster?"
+            } else if (fields.doi === '10.1063/5.0280263') {
               pdfUrl = 'https://repository.lincoln.ac.uk/ndownloader/files/58731724';
-              } else {
+            } else {
               pdfUrl = fields.eprint || fields.url || fields.URL ||
-               (fields.doi ? 'https://doi.org/' + fields.doi : '');
-              }
-
+                       (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            }
 
             if (pdfUrl) {
-              const aPdf = document.createElement('a');
-              aPdf.textContent = 'PDF';
-              aPdf.href = pdfUrl;
-              aPdf.target = '_blank';
-              aPdf.rel = 'noopener';
-              aPdf.className = 'pub-btn';
-              linksDiv.appendChild(aPdf);
+              const a = document.createElement('a');
+              a.className = 'pub-btn pub-btn-pdf';
+              a.href = pdfUrl; a.target = '_blank'; a.rel = 'noopener';
+              a.innerHTML = '<i class="fas fa-file-pdf" aria-hidden="true"></i> PDF';
+              linksDiv.appendChild(a);
             }
 
-            // Determine article page link: URL or DOI (for both articles and thesis)
-            const webUrl = fields.url || fields.URL ||
-                           (fields.doi ? 'https://doi.org/' + fields.doi : '');
+            const webUrl = fields.url || fields.URL || (fields.doi ? 'https://doi.org/' + fields.doi : '');
             if (webUrl) {
-              const aWeb = document.createElement('a');
-              aWeb.textContent = 'Article page';
-              aWeb.href = webUrl;
-              aWeb.target = '_blank';
-              aWeb.rel = 'noopener';
-              aWeb.className = 'pub-btn';
-              linksDiv.appendChild(aWeb);
+              const a = document.createElement('a');
+              a.className = 'pub-btn pub-btn-article';
+              a.href = webUrl; a.target = '_blank'; a.rel = 'noopener';
+              a.innerHTML = '<i class="fas fa-external-link-alt" aria-hidden="true"></i> Article';
+              linksDiv.appendChild(a);
             }
 
-            // Generate a downloadable BibTeX file for this entry
-            const key = extractBibKey(entry);
+            const key  = extractBibKey(entry);
             const aBib = document.createElement('a');
-            aBib.textContent = 'BibTeX';
-            aBib.className = 'pub-btn';
-            const bibContent = entry.trim() + '\n';
-            aBib.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(bibContent);
+            aBib.className = 'pub-btn pub-btn-bib';
+            aBib.innerHTML = '<i class="fas fa-quote-right" aria-hidden="true"></i> BibTeX';
+            aBib.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(entry.trim() + '\n');
             aBib.download = key + '.bib';
             linksDiv.appendChild(aBib);
 
-            li.appendChild(linksDiv);
+            body.appendChild(citP);
+            body.appendChild(linksDiv);
+            li.appendChild(numSpan);
+            li.appendChild(body);
             ol.appendChild(li);
           });
 
           container.appendChild(ol);
         }
 
-        renderList(categories.peer, 'In Peer-Reviewed Journals');
-        renderList(categories.thesis, 'Theses');
+        renderList(cats.peer,   'In Peer-Reviewed Journals');
+        renderList(cats.thesis, 'Theses');
       } catch (err) {
         console.error(err);
-        container.textContent = 'Unable to load publications. Please check your .bib file.';
+        container.innerHTML = '<p class="loading-msg">Unable to load publications. Please check the .bib file.</p>';
       }
     }
 
