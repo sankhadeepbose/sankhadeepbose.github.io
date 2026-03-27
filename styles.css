@@ -89,7 +89,7 @@ html[data-theme="dark"] .research-card:hover { border-color: #475569; }
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.75;
   color: var(--text);
   background: var(--bg);
