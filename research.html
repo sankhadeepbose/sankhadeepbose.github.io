@@ -4,58 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sankhadeep Bose – Research</title>
-  <!--
-    Minimal academic website: research page.
-    Replace text in square brackets with your own details.
-    The left sidebar holds your photo and contact icons.
-  -->
+  <meta name="description" content="Research interests of Sankhadeep Bose: thermodynamics of real systems and phase transitions of finite systems using Molecular Dynamics and atomistic simulation.">
   <link rel="stylesheet" href="styles.css">
-  <!-- Font Awesome for envelope and LinkedIn icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Academicons for Google Scholar icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Sidebar will be loaded dynamically -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Sticky navigation header (loaded dynamically) -->
+  <div id="header-container"></div>
+
+  <div class="page-wrapper">
+    <!-- Profile sidebar (loaded dynamically) -->
     <div id="sidebar-container"></div>
-    <!-- Main content area -->
-    <div class="main-content">
-      <!-- Header will be loaded dynamically -->
-      <div id="header-container"></div>
-      <!-- Primary navigation -->
-      <nav>
-        <ul>
-          <li><a href="index.html">About</a></li>
-          <li><a href="research.html" class="active">Research</a></li>
-          <li><a href="publications.html">Publications</a></li>
-        </ul>
-      </nav>
-      <main>
-        <section id="research">
-          <h2>Research</h2>
-          <!-- Research description: list your research interests -->
-          <p>My research interests are focused on the following areas:</p>
-          <ul>
-            <li>
-              <strong>Thermodynamics of Real Systems:</strong> I have been investigating how real, nonhomogeneous systems reach thermodynamic equilibrium. Using classical Molecular Dynamics, I analyze how these systems, from nanometer to macroscopic scales, reach equilibrium states governed by spatial variations in intensive variables. This research challenges
+
+    <main class="main-content" id="main-content">
+      <div class="content-section">
+        <p class="section-label">Research Interests</p>
+        <div class="research-cards">
+          <div class="research-card">
+            <h3>Thermodynamics of Real Systems</h3>
+            <p>
+              I investigate how real, nonhomogeneous systems reach thermodynamic equilibrium. Using classical
+              Molecular Dynamics, I analyze how these systems — from nanometer to macroscopic scales — exhibit
+              spatial variations in intensive variables that diverge from predictions for infinitely large ideal
+              systems. This challenges
               <a href="https://archive.org/details/herbert-b.-callen-thermodynamics-and-an-introduction-to-thermostatistics-wiley-1985_202201"
-                 target="_blank" rel="noopener">
-                standard equilibrium thermodynamics
-              </a>
-              as these intensive variables diverge from predictions for infinitely large ideal systems. Surface and boundary effects play a significant role than previously recognized.
-            </li>
-            <li>
-              <strong>Phase Transitions of Finite Systems:</strong>  I also study first order phase transitions of finite systems, primarily examining how surface induced nonhomogeneities, evaporation kinetics, and finite size effects influence their thermodynamic and dynamical behavior. Using atomistic simulations, I analyze the resulting dynamics to quantify how the classical thermodynamic signatures of phase transitions are modified in these systems.
-          </ul>
-        </section>
-      </main>
-      <footer>
-        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
-      </footer>
-    </div>
+                 target="_blank" rel="noopener">standard equilibrium thermodynamics</a>,
+              revealing a more significant role for surface and boundary effects than previously recognized.
+            </p>
+          </div>
+          <div class="research-card">
+            <h3>Phase Transitions of Finite Systems</h3>
+            <p>
+              I study first-order phase transitions of finite systems, examining how surface-induced
+              nonhomogeneities, evaporation kinetics, and finite-size effects influence their thermodynamic
+              and dynamical behavior. Using atomistic simulations, I quantify how the classical thermodynamic
+              signatures of phase transitions are modified in these systems.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
-  <!-- Load shared components (sidebar and header) -->
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
+  </footer>
+
   <script src="components.js"></script>
 </body>
 </html>
