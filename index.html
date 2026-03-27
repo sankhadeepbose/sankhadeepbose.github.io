@@ -4,44 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sankhadeep Bose – About</title>
-  <!--
-    Minimal academic website: home page.
-    Replace text in square brackets with your own details.
-    The left sidebar holds your photo and contact icons.
-  -->
+  <meta name="description" content="Sankhadeep Bose is a PhD candidate at Vellore Institute of Technology specializing in Thermodynamics, Statistical Mechanics, and Atomistic Simulation.">
   <link rel="stylesheet" href="styles.css">
-  <!-- Font Awesome for envelope and LinkedIn icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Academicons for Google Scholar icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Sidebar will be loaded dynamically into this container -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Sticky navigation header (loaded dynamically) -->
+  <div id="header-container"></div>
+
+  <div class="page-wrapper">
+    <!-- Profile sidebar (loaded dynamically) -->
     <div id="sidebar-container"></div>
-    <!-- Main content area -->
-    <div class="main-content">
-      <!-- Header will be loaded dynamically into this container -->
-      <div id="header-container"></div>
-      <!-- Primary navigation -->
-      <nav>
-        <ul>
-          <li><a href="index.html" class="active">About</a></li>
-          <li><a href="research.html">Research</a></li>
-          <li><a href="publications.html">Publications</a></li>
-        </ul>
-      </nav>
-      <main>
-        <section id="about">
-          <h2>About Me</h2>
+
+    <main class="main-content" id="main-content">
+      <div class="content-section">
+        <p class="section-label">About</p>
+        <div class="about-text">
           <p>
-            Hello, I am Sankhadeep (শঙ্খদীপ, pronounced /ʃɔŋ.kʰoː.d̪iːp/
+            Hello, I am Sankhadeep <span lang="bn">(শঙ্খদীপ)</span>,
+            pronounced <span style="font-style:italic;color:var(--text-muted)">/ʃɔŋ.kʰoː.d̪iːp/</span>
             <audio id="pronunciation" src="pronunciation.mp3"></audio>
-            <button onclick="document.getElementById('pronunciation').play()" style="background:none;border:none;padding:0;margin-left:1px;vertical-align:middle;display:inline;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Play Pronunciation" style="width:20px;height:20px;border:0;vertical-align:middle;">
-            </button>), a PhD candidate at
-            <a href="https://vit.ac.in/" target="_blank" rel="noopener noreferrer">Vellore Institute of Technology</a>, India,
-            specializing in
+            <button class="pronunciation-btn"
+                    onclick="document.getElementById('pronunciation').play()"
+                    aria-label="Play name pronunciation">
+              <i class="fas fa-volume-up" aria-hidden="true"></i> Listen
+            </button>.
+            I am a PhD candidate at
+            <a href="https://vit.ac.in/" target="_blank" rel="noopener noreferrer">Vellore Institute of Technology</a>,
+            India, specializing in
             <a href="https://en.wikipedia.org/wiki/Thermodynamics" target="_blank" rel="noopener noreferrer">Thermodynamics</a>,
             <a href="https://en.wikipedia.org/wiki/Statistical_mechanics" target="_blank" rel="noopener noreferrer">Statistical Mechanics</a>,
             and
@@ -53,19 +46,41 @@
             <a href="https://sites.google.com/view/brunodaguanno" target="_blank" rel="noopener noreferrer">Dr. Bruno D'Aguanno</a>
             (University of Lincoln, UK),
             <a href="https://staff.lincoln.ac.uk/afloris" target="_blank" rel="noopener noreferrer">Dr. Andrea Floris</a>
-            (University of Lincoln, UK),
-            and
+            (University of Lincoln, UK), and
             <a href="https://www.crs4.it/en/people/erminia-leonardi/" target="_blank" rel="noopener noreferrer">Dr. Erminia Leonardi</a>
-            (CRS4, Italy). Our research aims to advance the understanding of real nonhomogeneous thermodynamic systems, phase transitions in finite systems, and cross interactions in nanofluids.
+            (CRS4, Italy). Our research aims to advance the understanding of real nonhomogeneous thermodynamic
+            systems, phase transitions in finite systems, and cross interactions in nanofluids.
           </p>
-        </section>
-      </main>
-      <footer>
-        <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
-      </footer>
-    </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <p class="section-label">Collaborators</p>
+        <ul class="collab-chips">
+          <li>
+            <a href="https://sites.google.com/view/brunodaguanno" target="_blank" rel="noopener noreferrer">
+              Dr. Bruno D'Aguanno
+            </a>
+          </li>
+          <li>
+            <a href="https://staff.lincoln.ac.uk/afloris" target="_blank" rel="noopener noreferrer">
+              Dr. Andrea Floris
+            </a>
+          </li>
+          <li>
+            <a href="https://www.crs4.it/en/people/erminia-leonardi/" target="_blank" rel="noopener noreferrer">
+              Dr. Erminia Leonardi
+            </a>
+          </li>
+        </ul>
+      </div>
+    </main>
   </div>
-  <!-- Load shared components (sidebar and header) -->
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Sankhadeep Bose. All rights reserved.</p>
+  </footer>
+
   <script src="components.js"></script>
 </body>
 </html>
