@@ -26,19 +26,17 @@ function isDarkActive() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-function syncToggleButton() {
-  const icon  = document.getElementById('theme-icon');
-  const label = document.getElementById('theme-label');
-  const dark  = isDarkActive();
-  if (icon)  icon.className    = dark ? 'fas fa-sun'  : 'fas fa-moon';
-  if (label) label.textContent = dark ? 'Light' : 'Dark';
+function syncSwitch() {
+  const sw = document.getElementById('theme-switch');
+  if (!sw) return;
+  sw.classList.toggle('is-dark', isDarkActive());
 }
 
 function toggleTheme() {
   const next = isDarkActive() ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
-  syncToggleButton();
+  syncSwitch();
 }
 
 async function init() {
@@ -53,10 +51,10 @@ async function init() {
     }
   });
 
-  /* Wire up theme toggle */
-  const btn = document.getElementById('theme-toggle');
-  if (btn) btn.addEventListener('click', toggleTheme);
-  syncToggleButton();
+  /* Wire up toggle switch */
+  const sw = document.getElementById('theme-switch');
+  if (sw) sw.addEventListener('click', toggleTheme);
+  syncSwitch();
 
   loadComponent('sidebar-container', 'sidebar.html');
 }
