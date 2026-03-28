@@ -2,12 +2,10 @@
  * Dynamic component loader + theme toggle for the academic website.
  */
 
-/* ── Theme: apply saved or system preference immediately ── */
+/* ── Apply saved theme before first paint to avoid flash ── */
 (function () {
   const saved = localStorage.getItem('theme');
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
-  }
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
 })();
 
 async function loadComponent(id, url) {
@@ -23,22 +21,24 @@ async function loadComponent(id, url) {
 
 function isDarkActive() {
   const attr = document.documentElement.getAttribute('data-theme');
-  if (attr === 'dark') return true;
+  if (attr === 'dark')  return true;
   if (attr === 'light') return false;
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-function syncToggleIcon() {
-  const icon = document.getElementById('theme-icon');
-  if (!icon) return;
-  icon.className = isDarkActive() ? 'fas fa-sun' : 'fas fa-moon';
+function syncToggleButton() {
+  const icon  = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  const dark  = isDarkActive();
+  if (icon)  icon.className    = dark ? 'fas fa-sun'  : 'fas fa-moon';
+  if (label) label.textContent = dark ? 'Light' : 'Dark';
 }
 
 function toggleTheme() {
   const next = isDarkActive() ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
-  syncToggleIcon();
+  syncToggleButton();
 }
 
 async function init() {
@@ -53,10 +53,10 @@ async function init() {
     }
   });
 
-  /* Wire up toggle button */
+  /* Wire up theme toggle */
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.addEventListener('click', toggleTheme);
-  syncToggleIcon();
+  syncToggleButton();
 
   loadComponent('sidebar-container', 'sidebar.html');
 }
