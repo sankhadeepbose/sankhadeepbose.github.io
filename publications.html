@@ -31,6 +31,7 @@
   <script src="components.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/citation-js@0.7.18/build/citation.min.js"></script>
   <script src="entropy.js"></script>
+  <script src="metrics.js"></script>
   <script>
     const Cite = require('citation-js');
 
@@ -174,6 +175,20 @@
 
             body.appendChild(citP);
             body.appendChild(linksDiv);
+
+            // Citation-count badge (peer-reviewed entries with a DOI only).
+            // metrics.js fills this in from Crossref after the list renders.
+            if (heading === 'In Peer-Reviewed Journals' && fields.doi) {
+              const metricsDiv = document.createElement('div');
+              metricsDiv.className = 'pub-metrics';
+              const metric = document.createElement('span');
+              metric.className = 'pub-metric';
+              metric.setAttribute('data-doi', fields.doi);
+              metric.setAttribute('data-metric-pending', '');
+              metricsDiv.appendChild(metric);
+              body.appendChild(metricsDiv);
+            }
+
             li.appendChild(numSpan);
             li.appendChild(body);
             ol.appendChild(li);
@@ -184,6 +199,9 @@
 
         renderList(cats.peer,   'In Peer-Reviewed Journals');
         renderList(cats.thesis, 'Theses');
+
+        // Fill citation-count badges from Crossref (separate module).
+        if (window.PubMetrics) window.PubMetrics.render(container);
       } catch (err) {
         console.error(err);
         container.innerHTML = '<p class="loading-msg">Unable to load publications. Please check the .bib file.</p>';
