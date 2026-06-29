@@ -439,6 +439,25 @@ strong { font-weight: 600; }
 .pub-btn-bib:hover    { background: var(--text-muted);   color: #fff;              text-decoration: none; }
 .loading-msg { color: var(--text-muted); font-style: italic; }
 
+/* Citation metric badge (Crossref) */
+.pub-metrics { margin-top: .4rem; display: flex; flex-wrap: wrap; gap: .375rem; }
+.pub-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .15rem .55rem;
+  border-radius: 99px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: .75rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity var(--ease);
+}
+.pub-metric.is-loaded { opacity: 1; }
+.pub-metric i { color: var(--accent); font-size: .7rem; }
+
 /* ── Footer ── */
 .site-footer {
   border-top: 1px solid var(--border);
