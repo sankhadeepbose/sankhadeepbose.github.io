@@ -3,8 +3,6 @@
    Modern, accessible, minimal design
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 /* ── Design Tokens (Light Mode) ── */
 :root {
   --bg:           #ffffff;
@@ -93,6 +91,18 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
+/* Reserve nav height before JS injects the header (prevents layout shift) */
+#header-container { min-height: var(--nav-h); }
+
+/* Fallback nav shown only when JavaScript is disabled */
+.noscript-nav {
+  padding: 1rem 1.5rem;
+  text-align: center;
+  font-size: .9375rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.noscript-nav a { margin: 0 .25rem; }
 
 /* ── Accessibility: Skip Link ── */
 .skip-link {
